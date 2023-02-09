@@ -20,18 +20,18 @@ func NewMessageRepository(dao local.MessageDao, network network.MessageService) 
 	}
 }
 
-func (mr messageRepository) Read(email string) ([]entity.Message, error) {
+func (mr *messageRepository) Read(email string) ([]entity.Message, error) {
 	return mr.dao.Read(email)
 }
 
-func (mr messageRepository) Insert(message entity.Message) (entity.Message, error) {
+func (mr *messageRepository) Insert(message entity.Message) (entity.Message, error) {
 	return mr.dao.Insert(message)
 }
 
-func (mr messageRepository) Inserts(messages []entity.Message) ([]entity.Message, error) {
+func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Message, error) {
 	return mr.dao.Inserts(messages)
 }
 
-func (mr messageRepository) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
+func (mr *messageRepository) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
 	return mr.network.SendMessage(message)
 }

@@ -18,7 +18,7 @@ func NewMessageDao(db *sql.DB) local.MessageDao {
 	}
 }
 
-func (md messageDao) Read(email string) ([]entity.Message, error) {
+func (md *messageDao) Read(email string) ([]entity.Message, error) {
 	var messages []entity.Message
 
 	rows, err := md.db.Query("SELECT * from message where email = ?", email)
@@ -39,7 +39,7 @@ func (md messageDao) Read(email string) ([]entity.Message, error) {
 	return messages, nil
 }
 
-func (md messageDao) Insert(message entity.Message) (entity.Message, error) {
+func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
 	result, err := md.db.Exec(
 		"Insert into message (email, message, created_date, message_type) VALUES (?, ?, ?, ?)",
 		message.Email,
@@ -57,7 +57,7 @@ func (md messageDao) Insert(message entity.Message) (entity.Message, error) {
 	return message, nil
 }
 
-func (md messageDao) Inserts(messages []entity.Message) ([]entity.Message, error) {
+func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, error) {
 	var newMessages []string
 
 	for _, msg := range messages {
