@@ -21,6 +21,7 @@ func NewMessageService(client gpt3.Client) network.MessageService {
 
 func (ms *messageService) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
 	return ms.client.Completion(ms.ctx, gpt3.CompletionRequest{
-		Prompt: []string{message.Message},
+		Prompt:    []string{message.Message},
+		MaxTokens: gpt3.IntPtr(512),
 	})
 }

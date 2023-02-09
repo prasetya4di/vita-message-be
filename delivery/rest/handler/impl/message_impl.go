@@ -2,7 +2,6 @@ package impl
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"vita-message-service/data/entity"
 	"vita-message-service/delivery/rest/handler"
@@ -31,13 +30,10 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	messages, err := mh.sendMessage.Invoke(newMessage)
 
 	if err != nil {
-		log.Println("An error happening, woww")
-		log.Fatal(err)
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Unknown error happen"})
-		return
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+	} else {
+		c.IndentedJSON(http.StatusCreated, messages)
 	}
-
-	c.IndentedJSON(http.StatusCreated, messages)
 }
 
 func (mh *messageHandler) GetMessage(c *gin.Context) {
@@ -45,10 +41,9 @@ func (mh *messageHandler) GetMessage(c *gin.Context) {
 	messages, err := mh.getMessage.Invoke(email)
 
 	if err != nil {
-		log.Fatal(err)
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": "Unknown error happen"})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
+	} else {
+		c.IndentedJSON(http.StatusOK, messages)
 	}
-
-	c.IndentedJSON(http.StatusOK, messages)
 }
