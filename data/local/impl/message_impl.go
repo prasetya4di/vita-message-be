@@ -13,7 +13,7 @@ type messageDao struct {
 }
 
 func NewMessageDao(db *sql.DB) local.MessageDao {
-	return messageDao{
+	return &messageDao{
 		db: db,
 	}
 }

@@ -13,7 +13,7 @@ type messageService struct {
 }
 
 func NewMessageService(client gpt3.Client) network.MessageService {
-	return messageService{
+	return &messageService{
 		ctx:    context.Background(),
 		client: client,
 	}

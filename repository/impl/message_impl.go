@@ -14,7 +14,7 @@ type messageRepository struct {
 }
 
 func NewMessageRepository(dao local.MessageDao, network network.MessageService) repository.MessageRepository {
-	return messageRepository{
+	return &messageRepository{
 		dao:     dao,
 		network: network,
 	}
