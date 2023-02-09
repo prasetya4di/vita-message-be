@@ -25,6 +25,7 @@ func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) 
 	}
 
 	var newMessages []entity.Message
+	message.MessageType = constant.Send
 	newMessage, err := sm.repo.Insert(message)
 	if err != nil {
 		return nil, err
