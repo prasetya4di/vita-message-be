@@ -36,7 +36,7 @@ func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) 
 			Email:       message.Email,
 			Message:     choice.Text,
 			CreatedDate: time.Now(),
-			MessageType: constant.Send,
+			MessageType: constant.Reply,
 		}
 		newMessages = append(newMessages, newReply)
 	}
