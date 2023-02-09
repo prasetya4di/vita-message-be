@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"log"
 	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
@@ -25,11 +26,10 @@ func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) 
 	}
 
 	var newMessages []entity.Message
+
+	message.CreatedDate = time.Now()
 	message.MessageType = constant.Send
-	newMessage, err := sm.repo.Insert(message)
-	if err != nil {
-		return nil, err
-	}
+	newMessages = append(newMessages, message)
 
 	for _, choice := range response.Choices {
 		newReply := entity.Message{
@@ -40,11 +40,12 @@ func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) 
 		}
 		newMessages = append(newMessages, newReply)
 	}
+
 	messages, err := sm.repo.Inserts(newMessages)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
-	newMessages = append(newMessages, newMessage)
 	return messages, nil
 }

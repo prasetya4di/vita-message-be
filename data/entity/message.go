@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -11,14 +10,4 @@ type Message struct {
 	Message     string    `json:"message"`
 	CreatedDate time.Time `json:"created_date"`
 	MessageType string    `json:"message_type"`
-}
-
-func (m Message) String() string {
-	return fmt.Sprintf(
-		"(%a, %b, %c, %d)",
-		m.Email,
-		m.Message,
-		m.CreatedDate,
-		m.MessageType,
-	)
 }
