@@ -26,3 +26,14 @@ func (ms *messageService) SendMessage(message entity.Message) (*gpt3.CompletionR
 		Temperature: gpt3.Float32Ptr(0.8),
 	})
 }
+
+func (ms *messageService) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {
+	return ms.client.CompletionStream(
+		ms.ctx,
+		gpt3.CompletionRequest{
+			Prompt:      []string{message.Message},
+			MaxTokens:   gpt3.IntPtr(256),
+			Temperature: gpt3.Float32Ptr(0.8),
+		},
+		onData)
+}
