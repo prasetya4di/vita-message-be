@@ -35,3 +35,7 @@ func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Messag
 func (mr *messageRepository) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
 	return mr.network.SendMessage(message)
 }
+
+func (mr *messageRepository) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {
+	return mr.network.StreamMessage(message, onData)
+}

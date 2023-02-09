@@ -10,4 +10,5 @@ type MessageRepository interface {
 	Insert(message entity.Message) (entity.Message, error)
 	Inserts(messages []entity.Message) ([]entity.Message, error)
 	SendMessage(message entity.Message) (*gpt3.CompletionResponse, error)
+	StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error
 }
