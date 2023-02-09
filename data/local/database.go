@@ -15,8 +15,8 @@ func GetDB() *sql.DB {
 		User:   os.Getenv("DBUSER"),
 		Passwd: os.Getenv("DBPASS"),
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
-		DBName: "message",
+		Addr:   os.Getenv("DBURL") + ":" + os.Getenv("DBPORT"),
+		DBName: os.Getenv("DBNAME"),
 	}
 
 	var err error

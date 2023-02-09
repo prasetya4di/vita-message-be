@@ -1,12 +1,16 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"github.com/PullRequestInc/go-gpt3"
 	"github.com/joho/godotenv"
 	"log"
-	"os"
+	"vita-message-service/data/local"
+	"vita-message-service/data/local/impl"
+	"vita-message-service/data/network"
+	impl2 "vita-message-service/data/network/impl"
+	"vita-message-service/delivery/rest"
+	impl5 "vita-message-service/delivery/rest/handler/impl"
+	impl3 "vita-message-service/repository/impl"
+	impl4 "vita-message-service/usecase/impl"
 )
 
 func init() {
@@ -18,19 +22,17 @@ func init() {
 }
 
 func main() {
-	openAiKey := os.Getenv("OPENAIKEY")
-	if openAiKey == "" {
-		log.Fatalln("Missing OPEN AI API KEY")
-	}
+	db := local.GetDB()
+	openAiClient := network.GetOpenAi()
 
-	ctx := context.Background()
-	openAiClient := gpt3.NewClient(openAiKey, gpt3.WithDefaultEngine(gpt3.TextDavinci003Engine))
+	messageDao := impl.NewMessageDao(db)
+	messageService := impl2.NewMessageService(openAiClient)
+	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 
-	resp, err := openAiClient.Completion(ctx, gpt3.CompletionRequest{
-		Prompt: []string{"How are you today ?"},
-	})
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println(resp.Choices[0].Text)
+	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
+	getMessageUseCase := impl4.NewGetMessage(messageRepository)
+
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, getMessageUseCase)
+
+	rest.LoadRoutes(messageHandler)
 }

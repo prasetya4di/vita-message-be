@@ -10,7 +10,7 @@ type getMessage struct {
 	repo repository.MessageRepository
 }
 
-func GetNewMessage(messageRepository repository.MessageRepository) usecase.GetMessage {
+func NewGetMessage(messageRepository repository.MessageRepository) usecase.GetMessage {
 	return &getMessage{
 		repo: messageRepository,
 	}
