@@ -10,4 +10,5 @@ type Message struct {
 	Message     string    `json:"message"`
 	CreatedDate time.Time `json:"created_date"`
 	MessageType string    `json:"message_type"`
+	FileType    string    `json:"fileType"`
 }

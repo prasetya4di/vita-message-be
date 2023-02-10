@@ -28,7 +28,7 @@ func (md *messageDao) Read(email string) ([]entity.Message, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var msg entity.Message
-		if err := rows.Scan(&msg.ID, &msg.Email, &msg.Message, &msg.CreatedDate, &msg.MessageType); err != nil {
+		if err := rows.Scan(&msg.ID, &msg.Email, &msg.Message, &msg.CreatedDate, &msg.MessageType, &msg.FileType); err != nil {
 			return nil, fmt.Errorf("message for email %q: %v", email, err)
 		}
 		messages = append(messages, msg)
@@ -41,11 +41,12 @@ func (md *messageDao) Read(email string) ([]entity.Message, error) {
 
 func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
 	result, err := md.db.Exec(
-		"Insert into message (email, message, created_date, message_type) VALUES (?, ?, ?, ?)",
+		"Insert into message (email, message, created_date, message_type, file_type) VALUES (?, ?, ?, ?, ?)",
 		message.Email,
 		message.Message,
 		message.CreatedDate,
-		message.MessageType)
+		message.MessageType,
+		message.FileType)
 	if err != nil {
 		return message, fmt.Errorf("add message: %v", err)
 	}
@@ -64,11 +65,12 @@ func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, erro
 	for _, msg := range messages {
 		msg.Message = strings.TrimSpace(msg.Message)
 		result, err := tx.Exec(
-			"INSERT INTO message (email, message, created_date, message_type) VALUES (?, ?, ?, ?)",
+			"INSERT INTO message (email, message, created_date, message_type, file_type) VALUES (?, ?, ?, ?, ?)",
 			msg.Email,
 			msg.Message,
 			msg.CreatedDate,
-			msg.MessageType)
+			msg.MessageType,
+			msg.FileType)
 
 		if err != nil {
 			tx.Rollback()
