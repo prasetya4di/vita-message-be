@@ -30,9 +30,10 @@ func main() {
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
+	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 
-	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, getMessageUseCase)
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase)
 
 	rest.LoadRoutes(messageHandler)
 }

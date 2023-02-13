@@ -9,14 +9,16 @@ import (
 )
 
 type messageHandler struct {
-	sendMessage usecase.SendMessage
-	getMessage  usecase.GetMessage
+	sendMessage  usecase.SendMessage
+	replyMessage usecase.ReplyMessage
+	getMessage   usecase.GetMessage
 }
 
-func NewMessageHandler(message usecase.SendMessage, getMessage usecase.GetMessage) handler.MessageHandler {
+func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage) handler.MessageHandler {
 	return &messageHandler{
-		sendMessage: message,
-		getMessage:  getMessage,
+		sendMessage:  message,
+		replyMessage: replyMessage,
+		getMessage:   getMessage,
 	}
 }
 
@@ -28,6 +30,22 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	}
 
 	messages, err := mh.sendMessage.Invoke(newMessage)
+
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+	} else {
+		c.IndentedJSON(http.StatusCreated, messages)
+	}
+}
+
+func (mh *messageHandler) ReplyMessage(c *gin.Context) {
+	var newMessage entity.Message
+
+	if err := c.BindJSON(&newMessage); err != nil {
+		return
+	}
+
+	messages, err := mh.replyMessage.Invoke(newMessage)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
