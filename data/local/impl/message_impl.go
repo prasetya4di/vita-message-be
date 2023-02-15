@@ -3,7 +3,13 @@ package impl
 import (
 	"database/sql"
 	"fmt"
+	"github.com/disintegration/imaging"
+	"image"
+	"log"
+	"mime/multipart"
+	"path/filepath"
 	"strings"
+	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 )
@@ -85,4 +91,23 @@ func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, erro
 		return nil, err
 	}
 	return insertedMessages, nil
+}
+
+func (md *messageDao) SaveImage(file multipart.File, header *multipart.FileHeader) string {
+	fileExt := filepath.Ext(header.Filename)
+	now := time.Now()
+	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
+
+	file.Seek(0, 0)
+	imageFile, _, err := image.Decode(file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	src := imaging.Resize(imageFile, 1000, 0, imaging.Lanczos)
+	err = imaging.Save(src, fmt.Sprintf("upload/images/%v", filename))
+	if err != nil {
+		log.Fatalf("failed to save image: %v", err)
+	}
+
+	return filename
 }
