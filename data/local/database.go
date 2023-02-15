@@ -12,12 +12,13 @@ func GetDB() *sql.DB {
 	var db *sql.DB
 
 	cfg := mysql.Config{
-		User:      os.Getenv("DBUSER"),
-		Passwd:    os.Getenv("DBPASS"),
-		Net:       "tcp",
-		Addr:      os.Getenv("DBURL") + ":" + os.Getenv("DBPORT"),
-		DBName:    os.Getenv("DBNAME"),
-		ParseTime: true,
+		User:                 os.Getenv("DBUSER"),
+		Passwd:               os.Getenv("DBPASS"),
+		Net:                  "tcp",
+		Addr:                 os.Getenv("DBURL") + ":" + os.Getenv("DBPORT"),
+		DBName:               os.Getenv("DBNAME"),
+		ParseTime:            true,
+		AllowNativePasswords: true,
 	}
 
 	var err error
