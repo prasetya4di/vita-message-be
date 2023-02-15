@@ -34,7 +34,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	}
-	c.IndentedJSON(http.StatusCreated, possibilities)
+	c.IndentedJSON(http.StatusCreated, gin.H{"data": possibilities})
 }
 
 func isValidImage(file multipart.File) bool {

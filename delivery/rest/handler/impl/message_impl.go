@@ -34,7 +34,7 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 	} else {
-		c.IndentedJSON(http.StatusCreated, messages)
+		c.IndentedJSON(http.StatusCreated, gin.H{"data": messages})
 	}
 }
 
@@ -50,7 +50,7 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 	} else {
-		c.IndentedJSON(http.StatusCreated, messages)
+		c.IndentedJSON(http.StatusCreated, gin.H{"data": messages})
 	}
 }
 
@@ -62,6 +62,6 @@ func (mh *messageHandler) GetMessage(c *gin.Context) {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	} else {
-		c.IndentedJSON(http.StatusOK, messages)
+		c.IndentedJSON(http.StatusOK, gin.H{"data": messages})
 	}
 }
