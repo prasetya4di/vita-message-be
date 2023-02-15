@@ -26,14 +26,19 @@ func main() {
 	openAiClient := network.GetOpenAi()
 
 	messageDao := impl.NewMessageDao(db)
+	imageDao := impl.NewImageDao(db)
 	messageService := impl2.NewMessageService(openAiClient)
+	imageService := impl2.NewImageService()
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
+	imageRepository := impl3.NewImageRepository(imageDao, imageService)
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
 	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
+	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase)
+	imageHandler := impl5.NewImageHandler(uploadImageUseCase)
 
-	rest.LoadRoutes(messageHandler)
+	rest.LoadRoutes(messageHandler, imageHandler)
 }
