@@ -6,5 +6,5 @@ import (
 )
 
 type UploadImage interface {
-	Invoke(email string, file multipart.File, header *multipart.FileHeader) ([]image.Possibility, error)
+	Invoke(email string, file multipart.File, header *multipart.FileHeader) (image.Scan, error)
 }

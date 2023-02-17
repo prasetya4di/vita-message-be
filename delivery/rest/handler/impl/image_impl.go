@@ -29,12 +29,12 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		return
 	}
 	email := c.Param("email")
-	possibilities, err := ih.uploadImage.Invoke(email, file, header)
+	scan, err := ih.uploadImage.Invoke(email, file, header)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	}
-	c.IndentedJSON(http.StatusCreated, gin.H{"data": possibilities})
+	c.IndentedJSON(http.StatusCreated, gin.H{"data": scan})
 }
 
 func isValidImage(file multipart.File) bool {

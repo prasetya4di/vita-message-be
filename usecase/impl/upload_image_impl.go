@@ -18,13 +18,15 @@ func NewUploadImage(repo repository.ImageRepository) usecase.UploadImage {
 	}
 }
 
-func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipart.FileHeader) ([]image.Possibility, error) {
+func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipart.FileHeader) (image.Scan, error) {
 	message, err := sm.repo.Insert(email, file, header)
 	if err != nil {
 		log.Fatalf("error insert image: %v", err)
-		return nil, err
+		return image.Scan{}, err
 	}
 
 	result := sm.repo.Scan(message)
-	return result, nil
+	return image.Scan{
+		Message: message, Possibilities: result,
+	}, nil
 }
