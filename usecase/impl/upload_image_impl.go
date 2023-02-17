@@ -3,6 +3,7 @@ package impl
 import (
 	"log"
 	"mime/multipart"
+	"vita-message-service/data/entity"
 	"vita-message-service/data/entity/image"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
@@ -27,6 +28,6 @@ func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipa
 
 	result := sm.repo.Scan(message)
 	return image.Scan{
-		Message: message, Possibilities: result,
+		Message: []entity.Message{message}, Possibilities: result,
 	}, nil
 }
