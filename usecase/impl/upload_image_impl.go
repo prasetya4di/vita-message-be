@@ -28,6 +28,6 @@ func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipa
 
 	result := sm.repo.Scan(message)
 	return image.Scan{
-		Message: []entity.Message{message}, Possibilities: result,
+		Messages: []entity.Message{message}, Possibilities: result,
 	}, nil
 }

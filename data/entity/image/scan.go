@@ -3,6 +3,6 @@ package image
 import "vita-message-service/data/entity"
 
 type Scan struct {
-	Message       []entity.Message `json:"message"`
+	Messages      []entity.Message `json:"messages"`
 	Possibilities []Possibility    `json:"possibilities"`
 }
