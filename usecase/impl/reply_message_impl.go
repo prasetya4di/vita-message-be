@@ -29,7 +29,7 @@ func (sm *replyMessage) Invoke(message entity.Message) ([]entity.Message, error)
 
 	message.CreatedDate = time.Now()
 	message.MessageType = constant.Reply
-	message.FileType = constant.TEXT
+	message.FileType = constant.Text
 	newMessages = append(newMessages, message)
 
 	for _, choice := range response.Choices {
@@ -38,7 +38,7 @@ func (sm *replyMessage) Invoke(message entity.Message) ([]entity.Message, error)
 			Message:     choice.Text,
 			CreatedDate: time.Now(),
 			MessageType: constant.Reply,
-			FileType:    constant.TEXT,
+			FileType:    constant.Text,
 		}
 		newMessages = append(newMessages, newReply)
 	}

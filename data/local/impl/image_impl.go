@@ -32,7 +32,7 @@ func (md *imageDao) Insert(email string, file multipart.File, header *multipart.
 		Message:     filename,
 		CreatedDate: time.Now(),
 		MessageType: constant.Send,
-		FileType:    constant.IMAGE,
+		FileType:    constant.Image,
 	}
 
 	result, err := md.db.Exec(

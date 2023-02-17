@@ -38,7 +38,7 @@ func main() {
 	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase)
-	imageHandler := impl5.NewImageHandler(uploadImageUseCase)
+	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase)
 
 	rest.LoadRoutes(messageHandler, imageHandler)
 }

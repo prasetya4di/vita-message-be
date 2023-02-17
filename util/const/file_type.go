@@ -1,6 +1,6 @@
 package constant
 
 const (
-	IMAGE = "image"
-	TEXT  = "text"
+	Image = "image"
+	Text  = "text"
 )
