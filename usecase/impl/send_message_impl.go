@@ -20,14 +20,19 @@ func NewSendMessage(messageRepository repository.MessageRepository) usecase.Send
 }
 
 func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) {
-	response, err := sm.repo.SendMessage(message)
+	createdDate := time.Now()
+	prevMessage, err := sm.repo.ReadByDate(message.Email, createdDate)
+	if err != nil {
+		return nil, err
+	}
+	response, err := sm.repo.SendMessages(prevMessage, message)
 	if err != nil {
 		return nil, err
 	}
 
 	var newMessages []entity.Message
 
-	message.CreatedDate = time.Now()
+	message.CreatedDate = createdDate
 	message.MessageType = constant.Send
 	message.FileType = constant.Text
 	newMessages = append(newMessages, message)

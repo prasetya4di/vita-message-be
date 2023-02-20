@@ -2,6 +2,7 @@ package impl
 
 import (
 	"github.com/PullRequestInc/go-gpt3"
+	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 	"vita-message-service/data/network"
@@ -24,6 +25,10 @@ func (mr *messageRepository) Read(email string) ([]entity.Message, error) {
 	return mr.dao.Read(email)
 }
 
+func (mr *messageRepository) ReadByDate(email string, time time.Time) ([]entity.Message, error) {
+	return mr.dao.ReadByDate(email, time)
+}
+
 func (mr *messageRepository) Insert(message entity.Message) (entity.Message, error) {
 	return mr.dao.Insert(message)
 }
@@ -34,6 +39,10 @@ func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Messag
 
 func (mr *messageRepository) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
 	return mr.network.SendMessage(message)
+}
+
+func (mr *messageRepository) SendMessages(prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error) {
+	return mr.network.SendMessages(prevMessages, newMessage)
 }
 
 func (mr *messageRepository) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {

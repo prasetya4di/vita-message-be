@@ -12,6 +12,7 @@ import (
 	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
+	constant "vita-message-service/util/const"
 )
 
 type messageDao struct {
@@ -28,6 +29,26 @@ func (md *messageDao) Read(email string) ([]entity.Message, error) {
 	var messages []entity.Message
 
 	rows, err := md.db.Query("SELECT * from message where email = ?", email)
+	if err != nil {
+		return nil, fmt.Errorf("message for email %q: %v", email, err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var msg entity.Message
+		if err := rows.Scan(&msg.ID, &msg.Email, &msg.Message, &msg.CreatedDate, &msg.MessageType, &msg.FileType); err != nil {
+			return nil, fmt.Errorf("message for email %q: %v", email, err)
+		}
+		messages = append(messages, msg)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("message for email %q: %v", email, err)
+	}
+	return messages, nil
+}
+
+func (md *messageDao) ReadByDate(email string, time2 time.Time) ([]entity.Message, error) {
+	var messages []entity.Message
+	rows, err := md.db.Query("SELECT * from message where email = ? and created_date >= ? and file_type = ?", email, time2.Add(-time.Hour*1), constant.Text)
 	if err != nil {
 		return nil, fmt.Errorf("message for email %q: %v", email, err)
 	}
