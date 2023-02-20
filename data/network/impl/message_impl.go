@@ -20,10 +20,12 @@ func NewMessageService(client gpt3.Client) network.MessageService {
 }
 
 func (ms *messageService) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
+	reqMessage := "Vita is an AI that help user to answer their question. Pras: " + message.Message + " Vita: "
 	return ms.client.Completion(ms.ctx, gpt3.CompletionRequest{
-		Prompt:      []string{message.Message},
+		Prompt:      []string{reqMessage},
 		MaxTokens:   gpt3.IntPtr(256),
 		Temperature: gpt3.Float32Ptr(0.8),
+		Stop:        []string{"Pras:", "Vita:"},
 	})
 }
 
