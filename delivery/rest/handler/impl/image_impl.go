@@ -2,6 +2,7 @@ package impl
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mime/multipart"
 	"net/http"
 	"time"
@@ -9,17 +10,20 @@ import (
 	"vita-message-service/delivery/rest/handler"
 	"vita-message-service/usecase"
 	constant "vita-message-service/util/const"
+	"vita-message-service/util/translation"
 )
 
 type imageHandler struct {
 	uploadImage  usecase.UploadImage
 	replyMessage usecase.ReplyMessage
+	localizer    *i18n.Localizer
 }
 
-func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage) handler.ImageHandler {
+func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage, localizer *i18n.Localizer) handler.ImageHandler {
 	return &imageHandler{
 		uploadImage,
 		message,
+		localizer,
 	}
 }
 
@@ -43,6 +47,20 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		replyMessage := entity.Message{
 			Email:       email,
 			Message:     scan.Possibilities[0].Description,
+			CreatedDate: time.Now(),
+			MessageType: constant.Reply,
+			FileType:    constant.Text,
+		}
+		messages, err := ih.replyMessage.Invoke(replyMessage)
+		if err != nil {
+			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+			return
+		}
+		scan.Messages = append(scan.Messages, messages...)
+	} else if len(scan.Possibilities) == 0 {
+		replyMessage := entity.Message{
+			Email:       email,
+			Message:     translation.UnknownImageMessage(ih.localizer),
 			CreatedDate: time.Now(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,

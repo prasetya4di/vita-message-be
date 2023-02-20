@@ -11,6 +11,7 @@ import (
 	impl5 "vita-message-service/delivery/rest/handler/impl"
 	impl3 "vita-message-service/repository/impl"
 	impl4 "vita-message-service/usecase/impl"
+	"vita-message-service/util/translation"
 )
 
 func init() {
@@ -24,6 +25,7 @@ func init() {
 func main() {
 	db := local.GetDB()
 	openAiClient := network.GetOpenAi()
+	localizer := translation.LoadTranslation()
 
 	messageDao := impl.NewMessageDao(db)
 	imageDao := impl.NewImageDao(db)
@@ -38,7 +40,7 @@ func main() {
 	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase)
-	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase)
+	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, localizer)
 
 	rest.LoadRoutes(messageHandler, imageHandler)
 }
