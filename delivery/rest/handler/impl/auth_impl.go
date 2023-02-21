@@ -13,14 +13,16 @@ import (
 )
 
 type authHandler struct {
-	login    usecase.Login
-	register usecase.Register
+	login             usecase.Login
+	register          usecase.Register
+	addInitialMessage usecase.AddInitialMessage
 }
 
-func NewAuthHandler(login usecase.Login, register usecase.Register) handler.AuthHandler {
+func NewAuthHandler(login usecase.Login, register usecase.Register, initiaMessage usecase.AddInitialMessage) handler.AuthHandler {
 	return &authHandler{
-		login:    login,
-		register: register,
+		login:             login,
+		register:          register,
+		addInitialMessage: initiaMessage,
 	}
 }
 
@@ -81,13 +83,24 @@ func (ah *authHandler) Register(c *gin.Context) {
 		return
 	}
 
-	registerResponse := response.User{
+	initialMessage, err := ah.addInitialMessage.Invoke(u.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
+	newUser := response.User{
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Nickname:  u.Nickname,
 		BirthDate: u.BirthDate,
 		Token:     t,
+	}
+
+	registerResponse := response.RegisterResponse{
+		User:    newUser,
+		Message: initialMessage,
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"data": registerResponse})
