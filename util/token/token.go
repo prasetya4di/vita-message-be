@@ -11,7 +11,7 @@ import (
 )
 
 func GenerateToken(email string) (string, error) {
-	tokenLifespan, err := strconv.Atoi(os.Getenv("TOKENHOURLIFESAPN"))
+	tokenLifespan, err := strconv.Atoi(os.Getenv("TOKENHOURLIFESPAN"))
 	if err != nil {
 		return "", err
 	}
@@ -64,7 +64,7 @@ func ExtractTokenID(c *gin.Context) (string, error) {
 	}
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		email := fmt.Sprintf("%.0f", claims["email"])
+		email := fmt.Sprintf("%s", claims["email"])
 		return email, nil
 	}
 	return "", nil

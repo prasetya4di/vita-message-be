@@ -18,7 +18,7 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 	routeMessage.Use(middlewares.JwtAuthMiddleware())
 	routeMessage.POST("/", mh.SendMessage)
 	routeMessage.POST("/reply", mh.ReplyMessage)
-	routeMessage.GET("/:email", mh.GetMessage)
+	routeMessage.GET("/", mh.GetMessage)
 
 	routeImage := router.Group("/image")
 	routeImage.Use(middlewares.JwtAuthMiddleware())

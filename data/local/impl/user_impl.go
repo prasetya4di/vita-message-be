@@ -54,7 +54,7 @@ func (ud *userDao) Get(email string) *entity.User {
 	err := ud.gormDb.Model(entity.User{}).Where("email = ?", email).Take(&user).Error
 
 	if err != nil {
-		log.Printf("error when get user :%v", err)
+		log.Printf("error when get user %s :%v", email, err)
 	}
 
 	user.Password = ""
