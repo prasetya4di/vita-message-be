@@ -1,7 +1,10 @@
 package usecase
 
-import "vita-message-service/data/entity"
+import (
+	"vita-message-service/data/entity"
+	"vita-message-service/delivery/rest/request"
+)
 
 type Login interface {
-	Invoke(email string, password string) (*entity.User, error)
+	Invoke(request request.LoginRequest) (*entity.User, error)
 }
