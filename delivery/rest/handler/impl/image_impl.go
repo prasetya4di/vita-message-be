@@ -14,15 +14,17 @@ import (
 )
 
 type imageHandler struct {
-	uploadImage  usecase.UploadImage
-	replyMessage usecase.ReplyMessage
-	localizer    *i18n.Localizer
+	uploadImage    usecase.UploadImage
+	replyMessage   usecase.ReplyMessage
+	getCurrentUser usecase.GetCurrentUser
+	localizer      *i18n.Localizer
 }
 
-func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage, localizer *i18n.Localizer) handler.ImageHandler {
+func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage, getCurrentUser usecase.GetCurrentUser, localizer *i18n.Localizer) handler.ImageHandler {
 	return &imageHandler{
 		uploadImage,
 		message,
+		getCurrentUser,
 		localizer,
 	}
 }
@@ -37,15 +39,19 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": "invalid image format"})
 		return
 	}
-	email := c.Param("email")
-	scan, err := ih.uploadImage.Invoke(email, file, header)
+	currentUser, err := ih.getCurrentUser.Invoke(c)
+	if err != nil {
+		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err})
+	}
+
+	scan, err := ih.uploadImage.Invoke(currentUser.Email, file, header)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		return
 	}
 	if len(scan.Possibilities) == 1 {
 		replyMessage := entity.Message{
-			Email:       email,
+			Email:       currentUser.Email,
 			Message:     scan.Possibilities[0].Description,
 			CreatedDate: time.Now(),
 			MessageType: constant.Reply,
@@ -59,7 +65,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		scan.Messages = append(scan.Messages, messages...)
 	} else if len(scan.Possibilities) == 0 {
 		replyMessage := entity.Message{
-			Email:       email,
+			Email:       currentUser.Email,
 			Message:     translation.UnknownImageMessage(ih.localizer),
 			CreatedDate: time.Now(),
 			MessageType: constant.Reply,
