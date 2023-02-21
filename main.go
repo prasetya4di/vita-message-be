@@ -45,10 +45,11 @@ func main() {
 	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
+	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, getCurrentUserUseCase, localizer)
-	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase)
+	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase)
 
 	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
 }
