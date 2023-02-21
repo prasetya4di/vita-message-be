@@ -2,69 +2,64 @@ package impl
 
 import (
 	"database/sql"
+	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 )
 
 type userDao struct {
-	db *sql.DB
+	db     *sql.DB
+	gormDb *gorm.DB
 }
 
-func NewUserDao(db *sql.DB) local.UserDao {
+func NewUserDao(db *sql.DB, db2 *gorm.DB) local.UserDao {
 	return &userDao{
-		db: db,
+		db:     db,
+		gormDb: db2,
 	}
 }
 
-func (ud *userDao) Login(email string, password string) (entity.User, error) {
+func (ud *userDao) Login(email string, password string) (*entity.User, error) {
 	// Retrieve user from database
-	row := ud.db.QueryRow("SELECT * FROM user WHERE email = ?", email)
-	var user entity.User
-	err := row.Scan(&user.Email, &user.FirstName, &user.LastName, &user.BirthDate, &user.Nickname, &user.Password)
-	if err != nil {
-		return entity.User{}, err
-	}
+	user := entity.User{}
+	err := ud.gormDb.Model(entity.User{}).Where("email = ?", email).Take(&user).Error
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return entity.User{}, err
+		return &entity.User{}, err
 	}
 	user.Password = ""
 
-	return user, nil
+	return &user, nil
 }
 
-func (ud *userDao) Register(user entity.User) (entity.User, error) {
+func (ud *userDao) Register(user entity.User) (*entity.User, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return entity.User{}, err
+		return &entity.User{}, err
 	}
 
-	// Insert user into database
-	_, err = ud.db.Exec("INSERT INTO user (email, password, first_name, last_name, nickname, birth_date) VALUES (?, ?, ?, ?, ?, ?)",
-		user.Email,
-		string(hash),
-		user.FirstName,
-		user.LastName,
-		user.Nickname,
-		user.BirthDate)
+	user.Password = string(hash)
+	err = ud.gormDb.Create(&user).Error
 	if err != nil {
-		return entity.User{}, err
+		return &entity.User{}, err
 	}
 
 	user.Password = ""
-	return user, nil
+	return &user, nil
 }
 
-func (ud *userDao) Get(email string) entity.User {
+func (ud *userDao) Get(email string) *entity.User {
 	// Retrieve user from database
-	row := ud.db.QueryRow("SELECT * FROM user WHERE email = ?", email)
-	var user entity.User
-	err := row.Scan(&user.Email, &user.FirstName, &user.LastName, &user.BirthDate, &user.Nickname, &user.Password)
+	user := entity.User{}
+	err := ud.gormDb.Model(entity.User{}).Where("email = ?", email).Take(&user).Error
+
 	if err != nil {
-		return entity.User{}
+		log.Printf("error when get user :%v", err)
 	}
 
-	return user
+	user.Password = ""
+	return &user
 }
