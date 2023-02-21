@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"database/sql"
 	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
 	"log"
@@ -10,14 +9,12 @@ import (
 )
 
 type userDao struct {
-	db     *sql.DB
 	gormDb *gorm.DB
 }
 
-func NewUserDao(db *sql.DB, db2 *gorm.DB) local.UserDao {
+func NewUserDao(db *gorm.DB) local.UserDao {
 	return &userDao{
-		db:     db,
-		gormDb: db2,
+		gormDb: db,
 	}
 }
 

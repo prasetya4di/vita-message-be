@@ -7,8 +7,11 @@ import (
 	"vita-message-service/delivery/rest/handler"
 )
 
-func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler) {
+func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.AuthHandler) {
 	router := gin.Default()
+	router.POST("/login", ah.Login)
+	router.POST("/register", ah.Register)
+
 	router.POST("/message", mh.SendMessage)
 	router.POST("/message/reply", mh.ReplyMessage)
 	router.GET("/message/:email", mh.GetMessage)

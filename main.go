@@ -24,23 +24,30 @@ func init() {
 
 func main() {
 	db := local.GetDB()
+	gormDb := local.GetGormDb()
 	openAiClient := network.GetOpenAi()
 	localizer := translation.LoadTranslation()
 
 	messageDao := impl.NewMessageDao(db)
 	imageDao := impl.NewImageDao(db)
+	userDao := impl.NewUserDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient)
 	imageService := impl2.NewImageService()
+
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
+	userRepository := impl3.NewUserRepository(userDao)
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
 	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
+	loginUseCase := impl4.NewLoginUseCase(userRepository)
+	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, localizer)
+	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase)
 
-	rest.LoadRoutes(messageHandler, imageHandler)
+	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
 }
