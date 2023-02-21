@@ -19,8 +19,8 @@ func NewReplyMessage(messageRepository repository.MessageRepository) usecase.Rep
 	}
 }
 
-func (sm *replyMessage) Invoke(message entity.Message) ([]entity.Message, error) {
-	response, err := sm.repo.SendMessage(message)
+func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
+	response, err := sm.repo.SendMessage(user, message)
 	if err != nil {
 		return nil, err
 	}

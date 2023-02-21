@@ -20,32 +20,32 @@ func NewMessageService(client gpt3.Client) network.MessageService {
 	}
 }
 
-func (ms *messageService) SendMessage(message entity.Message) (*gpt3.CompletionResponse, error) {
-	reqMessage := "Vita is an AI that help user to answer their question. Pras: " + message.Message + " Vita: "
+func (ms *messageService) SendMessage(user *entity.User, message entity.Message) (*gpt3.CompletionResponse, error) {
+	reqMessage := "Vita is an AI that help user to answer their question. " + user.Nickname + ": " + message.Message + " Vita: "
 	return ms.client.Completion(ms.ctx, gpt3.CompletionRequest{
 		Prompt:      []string{reqMessage},
 		MaxTokens:   gpt3.IntPtr(256),
 		Temperature: gpt3.Float32Ptr(0.8),
-		Stop:        []string{"Pras:", "Vita:"},
+		Stop:        []string{user.Nickname + ":", "Vita:"},
 	})
 }
 
-func (ms *messageService) SendMessages(prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error) {
+func (ms *messageService) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error) {
 	reqMessage := "Vita is an AI that help user to answer their question. "
 	for _, message := range prevMessages {
 		if message.MessageType == constant.Reply {
 			reqMessage += " Vita: " + message.Message
 		} else {
-			reqMessage += " Pras: " + message.Message
+			reqMessage += " " + user.Nickname + ": " + message.Message
 		}
 	}
-	reqMessage += " Pras: " + newMessage.Message
+	reqMessage += " " + user.Nickname + ": " + newMessage.Message
 	reqMessage += " Vita: "
 	return ms.client.Completion(ms.ctx, gpt3.CompletionRequest{
 		Prompt:      []string{reqMessage},
 		MaxTokens:   gpt3.IntPtr(256),
 		Temperature: gpt3.Float32Ptr(0.8),
-		Stop:        []string{"Pras:", "Vita:"},
+		Stop:        []string{user.Nickname + ":", "Vita:"},
 	})
 }
 

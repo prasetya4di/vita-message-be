@@ -37,7 +37,7 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.sendMessage.Invoke(newMessage)
+	messages, err := mh.sendMessage.Invoke(currentUser, newMessage)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
@@ -59,7 +59,7 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.replyMessage.Invoke(newMessage)
+	messages, err := mh.replyMessage.Invoke(currentUser, newMessage)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})

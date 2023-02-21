@@ -6,7 +6,7 @@ import (
 )
 
 type MessageService interface {
-	SendMessage(message entity.Message) (*gpt3.CompletionResponse, error)
-	SendMessages(prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error)
+	SendMessage(user *entity.User, message entity.Message) (*gpt3.CompletionResponse, error)
+	SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error)
 	StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error
 }

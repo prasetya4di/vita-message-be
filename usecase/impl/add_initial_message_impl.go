@@ -23,7 +23,7 @@ func (aim *addInitialMessage) Invoke(email string) (*entity.Message, error) {
 		Message:     "Hi my name is Vita, i'm an AI assistant, how can i help you ?",
 		CreatedDate: time.Now(),
 		MessageType: constant.Reply,
-		FileType:    constant.Reply,
+		FileType:    constant.Text,
 	}
 
 	message, err := aim.repo.Insert(newMessage)

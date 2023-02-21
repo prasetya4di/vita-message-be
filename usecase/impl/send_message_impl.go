@@ -19,13 +19,13 @@ func NewSendMessage(messageRepository repository.MessageRepository) usecase.Send
 	}
 }
 
-func (sm *sendMessage) Invoke(message entity.Message) ([]entity.Message, error) {
+func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
 	createdDate := time.Now()
 	prevMessage, err := sm.repo.ReadByDate(message.Email, createdDate)
 	if err != nil {
 		return nil, err
 	}
-	response, err := sm.repo.SendMessages(prevMessage, message)
+	response, err := sm.repo.SendMessages(user, prevMessage, message)
 	if err != nil {
 		return nil, err
 	}

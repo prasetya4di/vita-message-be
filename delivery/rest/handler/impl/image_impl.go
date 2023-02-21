@@ -57,7 +57,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}
-		messages, err := ih.replyMessage.Invoke(replyMessage)
+		messages, err := ih.replyMessage.Invoke(currentUser, replyMessage)
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
@@ -71,7 +71,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}
-		messages, err := ih.replyMessage.Invoke(replyMessage)
+		messages, err := ih.replyMessage.Invoke(currentUser, replyMessage)
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
