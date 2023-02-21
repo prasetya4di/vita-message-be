@@ -22,7 +22,7 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 
 	routeImage := router.Group("/image")
 	routeImage.Use(middlewares.JwtAuthMiddleware())
-	routeImage.POST("/:email", ih.UploadImage)
+	routeImage.POST("/", ih.UploadImage)
 
 	err := router.Run(os.Getenv("BASEURL") + ":" + os.Getenv("PORT"))
 	if err != nil {
