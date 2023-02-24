@@ -51,13 +51,15 @@ func (ah *authHandler) Login(c *gin.Context) {
 		return
 	}
 
-	loginResponse := response.User{
-		Email:     u.Email,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Nickname:  u.Nickname,
-		BirthDate: u.BirthDate,
-		Token:     t,
+	loginResponse := response.LoginResponse{
+		User: response.User{
+			Email:     u.Email,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Nickname:  u.Nickname,
+			BirthDate: u.BirthDate,
+			Token:     t,
+		},
 	}
 
 	c.JSON(http.StatusOK, gin.H{"data": loginResponse})
