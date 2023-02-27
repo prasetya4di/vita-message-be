@@ -16,13 +16,13 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 
 	routeMessage := router.Group("/message")
 	routeMessage.Use(middlewares.JwtAuthMiddleware())
-	routeMessage.POST("/", mh.SendMessage)
+	routeMessage.POST("", mh.SendMessage)
 	routeMessage.POST("/reply", mh.ReplyMessage)
-	routeMessage.GET("/", mh.GetMessage)
+	routeMessage.GET("", mh.GetMessage)
 
 	routeImage := router.Group("/image")
 	routeImage.Use(middlewares.JwtAuthMiddleware())
-	routeImage.POST("/", ih.UploadImage)
+	routeImage.POST("", ih.UploadImage)
 
 	err := router.Run(os.Getenv("BASEURL") + ":" + os.Getenv("PORT"))
 	if err != nil {
