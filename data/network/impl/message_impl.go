@@ -58,7 +58,6 @@ func (ms *messageService) SendMessages(user *entity.User, prevMessages []entity.
 		Messages:    reqMessage,
 		MaxTokens:   256,
 		Temperature: 0.8,
-		Stop:        []string{user.Nickname + ":", "Vita:"},
 	})
 }
 
