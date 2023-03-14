@@ -41,7 +41,7 @@ func (mr *messageRepository) SendMessage(user *entity.User, message entity.Messa
 	return mr.network.SendMessage(user, message)
 }
 
-func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.CompletionResponse, error) {
+func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.ChatCompletionResponse, error) {
 	return mr.network.SendMessages(user, prevMessages, newMessage)
 }
 

@@ -40,7 +40,7 @@ func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]enti
 	for _, choice := range response.Choices {
 		newReply := entity.Message{
 			Email:       message.Email,
-			Message:     choice.Text,
+			Message:     choice.Message.Content,
 			CreatedDate: time.Now(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
