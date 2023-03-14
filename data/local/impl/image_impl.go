@@ -8,10 +8,10 @@ import (
 	"log"
 	"mime/multipart"
 	"path/filepath"
-	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 )
 
 type imageDao struct {
@@ -30,7 +30,7 @@ func (md *imageDao) Insert(email string, file multipart.File, header *multipart.
 	message := entity.Message{
 		Email:       email,
 		Message:     filename,
-		CreatedDate: time.Now(),
+		CreatedDate: time2.CurrentTime(),
 		MessageType: constant.Send,
 		FileType:    constant.Image,
 	}
@@ -56,7 +56,7 @@ func (md *imageDao) Insert(email string, file multipart.File, header *multipart.
 
 func saveImage(file multipart.File, header *multipart.FileHeader) string {
 	fileExt := filepath.Ext(header.Filename)
-	now := time.Now()
+	now := time2.CurrentTime()
 	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
 
 	file.Seek(0, 0)

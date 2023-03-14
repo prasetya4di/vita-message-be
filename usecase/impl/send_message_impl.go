@@ -2,11 +2,11 @@ package impl
 
 import (
 	"log"
-	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 )
 
 type sendMessage struct {
@@ -20,7 +20,7 @@ func NewSendMessage(messageRepository repository.MessageRepository) usecase.Send
 }
 
 func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
-	createdDate := time.Now()
+	createdDate := time2.CurrentTime()
 	prevMessage, err := sm.repo.ReadByDate(message.Email, createdDate)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]enti
 		newReply := entity.Message{
 			Email:       message.Email,
 			Message:     choice.Message.Content,
-			CreatedDate: time.Now(),
+			CreatedDate: createdDate,
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}

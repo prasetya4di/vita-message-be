@@ -2,11 +2,11 @@ package impl
 
 import (
 	"log"
-	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 )
 
 type replyMessage struct {
@@ -27,7 +27,7 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 
 	var newMessages []entity.Message
 
-	message.CreatedDate = time.Now()
+	message.CreatedDate = time2.CurrentTime()
 	message.MessageType = constant.Reply
 	message.FileType = constant.Text
 	newMessages = append(newMessages, message)
@@ -36,7 +36,7 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 		newReply := entity.Message{
 			Email:       message.Email,
 			Message:     choice.Text,
-			CreatedDate: time.Now(),
+			CreatedDate: time2.CurrentTime(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}

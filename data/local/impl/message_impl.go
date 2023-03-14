@@ -13,6 +13,7 @@ import (
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 )
 
 type messageDao struct {
@@ -116,7 +117,7 @@ func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, erro
 
 func (md *messageDao) SaveImage(file multipart.File, header *multipart.FileHeader) string {
 	fileExt := filepath.Ext(header.Filename)
-	now := time.Now()
+	now := time2.CurrentTime()
 	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
 
 	file.Seek(0, 0)

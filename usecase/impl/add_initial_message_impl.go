@@ -1,11 +1,11 @@
 package impl
 
 import (
-	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 )
 
 type addInitialMessage struct {
@@ -21,7 +21,7 @@ func (aim *addInitialMessage) Invoke(email string) (*entity.Message, error) {
 		Email: email,
 		// Change with localization later
 		Message:     "Hi my name is Vita, i'm an AI assistant, how can i help you ?",
-		CreatedDate: time.Now(),
+		CreatedDate: time2.CurrentTime(),
 		MessageType: constant.Reply,
 		FileType:    constant.Text,
 	}

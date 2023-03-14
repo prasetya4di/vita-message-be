@@ -6,6 +6,7 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"log"
 	"os"
+	"time"
 )
 
 func GetDB() *sql.DB {
@@ -19,6 +20,7 @@ func GetDB() *sql.DB {
 		DBName:               os.Getenv("DBNAME"),
 		ParseTime:            true,
 		AllowNativePasswords: true,
+		Loc:                  time.Local,
 	}
 
 	var err error

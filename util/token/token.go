@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	time2 "vita-message-service/util/local_time"
 )
 
 func GenerateToken(email string) (string, error) {
@@ -19,7 +20,7 @@ func GenerateToken(email string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["authorized"] = true
 	claims["email"] = email
-	claims["exp"] = time.Now().Add(time.Hour * time.Duration(tokenLifespan)).Unix()
+	claims["exp"] = time2.CurrentTime().Add(time.Hour * time.Duration(tokenLifespan)).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
 	return token.SignedString([]byte(os.Getenv("APISECRET")))

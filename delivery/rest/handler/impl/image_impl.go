@@ -5,11 +5,11 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"mime/multipart"
 	"net/http"
-	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/delivery/rest/handler"
 	"vita-message-service/usecase"
 	constant "vita-message-service/util/const"
+	time2 "vita-message-service/util/local_time"
 	"vita-message-service/util/translation"
 )
 
@@ -53,7 +53,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		replyMessage := entity.Message{
 			Email:       currentUser.Email,
 			Message:     scan.Possibilities[0].Description,
-			CreatedDate: time.Now(),
+			CreatedDate: time2.CurrentTime(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}
@@ -67,7 +67,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 		replyMessage := entity.Message{
 			Email:       currentUser.Email,
 			Message:     translation.UnknownImageMessage(ih.localizer),
-			CreatedDate: time.Now(),
+			CreatedDate: time2.CurrentTime(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}
