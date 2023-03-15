@@ -20,7 +20,7 @@ func NewReplyMessage(messageRepository repository.MessageRepository) usecase.Rep
 }
 
 func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
-	response, err := sm.repo.SendMessage(user, message)
+	response, err := sm.repo.SendMessages(user, []entity.Message{}, message)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 	for _, choice := range response.Choices {
 		newReply := entity.Message{
 			Email:       message.Email,
-			Message:     choice.Text,
+			Message:     choice.Message.Content,
 			CreatedDate: time2.CurrentTime(),
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
