@@ -16,14 +16,16 @@ import (
 type imageHandler struct {
 	uploadImage    usecase.UploadImage
 	replyMessage   usecase.ReplyMessage
+	saveMessage    usecase.SaveMessage
 	getCurrentUser usecase.GetCurrentUser
 	localizer      *i18n.Localizer
 }
 
-func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage, getCurrentUser usecase.GetCurrentUser, localizer *i18n.Localizer) handler.ImageHandler {
+func NewImageHandler(uploadImage usecase.UploadImage, message usecase.ReplyMessage, saveMessage usecase.SaveMessage, getCurrentUser usecase.GetCurrentUser, localizer *i18n.Localizer) handler.ImageHandler {
 	return &imageHandler{
 		uploadImage,
 		message,
+		saveMessage,
 		getCurrentUser,
 		localizer,
 	}
@@ -71,12 +73,12 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
 		}
-		messages, err := ih.replyMessage.Invoke(currentUser, replyMessage)
+		message, err := ih.saveMessage.Invoke(replyMessage)
 		if err != nil {
 			c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 			return
 		}
-		scan.Messages = append(scan.Messages, messages...)
+		scan.Messages = append(scan.Messages, message)
 	}
 	c.IndentedJSON(http.StatusCreated, gin.H{"data": scan})
 }
