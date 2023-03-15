@@ -2,18 +2,18 @@ package impl
 
 import (
 	"vita-message-service/data/entity"
-	"vita-message-service/data/local"
+	"vita-message-service/repository"
 	"vita-message-service/usecase"
 )
 
 type saveMessage struct {
-	dao local.MessageDao
+	repository repository.MessageRepository
 }
 
-func NewSaveMessage(dao local.MessageDao) usecase.SaveMessage {
-	return &saveMessage{dao: dao}
+func NewSaveMessage(repository repository.MessageRepository) usecase.SaveMessage {
+	return &saveMessage{repository: repository}
 }
 
 func (sm *saveMessage) Invoke(message entity.Message) (entity.Message, error) {
-	return sm.dao.Insert(message)
+	return sm.repository.Insert(message)
 }

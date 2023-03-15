@@ -40,6 +40,7 @@ func main() {
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
 	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
+	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)
 	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
@@ -48,7 +49,7 @@ func main() {
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase)
-	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, getCurrentUserUseCase, localizer)
+	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
 	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase)
 
 	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
