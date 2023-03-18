@@ -23,13 +23,12 @@ func init() {
 }
 
 func main() {
-	db := local.GetDB()
 	gormDb := local.GetGormDb()
 	openAiClient := network.GetOpenAi()
 	localizer := translation.LoadTranslation()
 
-	messageDao := impl.NewMessageDao(db)
-	imageDao := impl.NewImageDao(db)
+	messageDao := impl.NewMessageDao(gormDb)
+	imageDao := impl.NewImageDao(gormDb)
 	userDao := impl.NewUserDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient)
 	imageService := impl2.NewImageService()
