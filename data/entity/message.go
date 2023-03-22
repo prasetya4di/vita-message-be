@@ -11,4 +11,5 @@ type Message struct {
 	CreatedDate time.Time `json:"created_date" gorm:"not null"`
 	MessageType string    `json:"message_type" gorm:"size:5; not null"`
 	FileType    string    `json:"file_type" gorm:"size:5; not null"`
+	EnergyUsage uint      `json:"energy_usage" gorm:"uint; not null"`
 }
