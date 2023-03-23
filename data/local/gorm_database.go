@@ -31,7 +31,11 @@ func GetGormDb() *gorm.DB {
 		fmt.Println("gorm is connected to the database ", "mysql")
 	}
 
-	db.AutoMigrate(&entity.User{}, &entity.Message{})
+	db.AutoMigrate(
+		&entity.User{},
+		&entity.Message{},
+		&entity.CacheMessage{},
+		&entity.Energy{})
 
 	return db
 }
