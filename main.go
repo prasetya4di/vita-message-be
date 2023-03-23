@@ -41,8 +41,8 @@ func main() {
 	energyRepository := impl3.NewEnergyRepository(energyDao)
 	cacheMessageRepository := impl3.NewCacheMessageRepository(cacheMessageDao)
 
-	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
-	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
+	sendMessageUseCase := impl4.NewSendMessage(messageRepository, cacheMessageRepository)
+	replyMessageUseCase := impl4.NewReplyMessage(messageRepository, cacheMessageRepository)
 	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)

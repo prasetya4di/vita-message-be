@@ -2,6 +2,7 @@ package impl
 
 import (
 	"log"
+	"strings"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
@@ -10,12 +11,14 @@ import (
 )
 
 type sendMessage struct {
-	repo repository.MessageRepository
+	repo                   repository.MessageRepository
+	cacheMessageRepository repository.CacheMessageRepository
 }
 
-func NewSendMessage(messageRepository repository.MessageRepository) usecase.SendMessage {
+func NewSendMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository) usecase.SendMessage {
 	return &sendMessage{
-		repo: messageRepository,
+		repo:                   messageRepository,
+		cacheMessageRepository: cacheMessageRepository,
 	}
 }
 
@@ -52,6 +55,24 @@ func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]enti
 	messages, err := sm.repo.Inserts(newMessages)
 	if err != nil {
 		log.Println(err)
+		return nil, err
+	}
+
+	var prevMessages []string
+	delimiter := "\n" // choose your delimiter
+
+	for _, newMessage := range newMessages {
+		prevMessages = append(prevMessages, newMessage.Message)
+	}
+
+	cacheMessage := entity.CacheMessage{
+		Message:     message.Message,
+		PrevMessage: strings.Join(prevMessages, delimiter),
+		Answer:      newMessages[len(newMessages)-1].Message,
+		EnergyUsage: newMessages[len(newMessages)-1].EnergyUsage,
+	}
+	_, err = sm.cacheMessageRepository.Insert(cacheMessage)
+	if err != nil {
 		return nil, err
 	}
 
