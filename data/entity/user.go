@@ -14,4 +14,5 @@ type User struct {
 	Password  string    `json:"password" gorm:"size:128; not null"`
 	BirthDate time.Time `json:"birth_date" gorm:"not null"`
 	Message   []Message `gorm:"foreignKey:email;references:email"`
+	Energy    Energy    `json:"energy" gorm:"foreignKey:email; references:email"`
 }
