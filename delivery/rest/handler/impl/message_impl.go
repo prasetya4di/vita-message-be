@@ -6,6 +6,8 @@ import (
 	"vita-message-service/data/entity"
 	"vita-message-service/delivery/rest/handler"
 	"vita-message-service/usecase"
+	constant "vita-message-service/util/const"
+	"vita-message-service/util/local_time"
 )
 
 type messageHandler struct {
@@ -42,13 +44,16 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 
 	newMessage.Email = currentUser.Email
 	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
-	}
 
 	var messages []entity.Message
 	if cachedMessage.Message != "" {
-		messages, err = mh.saveMessages.Invoke(messages)
+		newMessage.CreatedDate = local_time.CurrentTime()
+		newMessage.MessageType = constant.Send
+		newMessage.FileType = constant.Text
+		messages, err = mh.saveMessages.Invoke([]entity.Message{
+			newMessage,
+			cachedMessage,
+		})
 	} else {
 		messages, err = mh.sendMessage.Invoke(currentUser, newMessage)
 	}
@@ -74,13 +79,16 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 
 	newMessage.Email = currentUser.Email
 	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
-	if err != nil {
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
-	}
 
 	var messages []entity.Message
 	if cachedMessage.Message != "" {
-		messages, err = mh.saveMessages.Invoke(messages)
+		newMessage.CreatedDate = local_time.CurrentTime()
+		newMessage.MessageType = constant.Reply
+		newMessage.FileType = constant.Text
+		messages, err = mh.saveMessages.Invoke([]entity.Message{
+			newMessage,
+			cachedMessage,
+		})
 	} else {
 		messages, err = mh.replyMessage.Invoke(currentUser, newMessage)
 	}

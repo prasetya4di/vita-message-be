@@ -37,5 +37,8 @@ func GetGormDb() *gorm.DB {
 		&entity.CacheMessage{},
 		&entity.Energy{})
 
+	db.Model(entity.Message{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
+	db.Model(entity.Energy{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
+
 	return db
 }

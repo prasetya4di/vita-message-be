@@ -51,7 +51,7 @@ func (ud *userDao) Register(user entity.User) (*entity.User, error) {
 func (ud *userDao) Get(email string) *entity.User {
 	// Retrieve user from database
 	user := entity.User{}
-	err := ud.gormDb.Model(entity.User{}).Where("email = ?", email).Take(&user).Association("messages").Error
+	err := ud.gormDb.Model(entity.User{}).Where("email = ?", email).Take(&user).Error
 
 	if err != nil {
 		log.Printf("error when get user %s :%v", email, err)
