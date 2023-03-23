@@ -44,6 +44,7 @@ func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]enti
 			CreatedDate: createdDate,
 			MessageType: constant.Reply,
 			FileType:    constant.Text,
+			EnergyUsage: uint(response.Usage.CompletionTokens),
 		}
 		newMessages = append(newMessages, newReply)
 	}
