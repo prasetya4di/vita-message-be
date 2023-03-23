@@ -30,12 +30,14 @@ func main() {
 	messageDao := impl.NewMessageDao(gormDb)
 	imageDao := impl.NewImageDao(gormDb)
 	userDao := impl.NewUserDao(gormDb)
+	energyDao := impl.NewEnergyDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient)
 	imageService := impl2.NewImageService()
 
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
 	userRepository := impl3.NewUserRepository(userDao)
+	energyRepository := impl3.NewEnergyRepository(energyDao)
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
 	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
@@ -46,10 +48,11 @@ func main() {
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
+	addEnergy := impl4.NewAddEnergy(energyRepository)
 
 	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
-	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase)
+	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergy)
 
 	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
 }
