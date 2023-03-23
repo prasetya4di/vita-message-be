@@ -31,6 +31,7 @@ func main() {
 	imageDao := impl.NewImageDao(gormDb)
 	userDao := impl.NewUserDao(gormDb)
 	energyDao := impl.NewEnergyDao(gormDb)
+	cacheMessageDao := impl.NewCacheMessageDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient)
 	imageService := impl2.NewImageService()
 
@@ -38,6 +39,7 @@ func main() {
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
 	userRepository := impl3.NewUserRepository(userDao)
 	energyRepository := impl3.NewEnergyRepository(energyDao)
+	cacheMessageRepository := impl3.NewCacheMessageRepository(cacheMessageDao)
 
 	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
 	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
@@ -48,11 +50,13 @@ func main() {
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
-	addEnergy := impl4.NewAddEnergy(energyRepository)
+	addEnergyUseCase := impl4.NewAddEnergy(energyRepository)
+	readFromCacheMessageUseCase := impl4.NewReadFromCacheMessage(cacheMessageRepository, messageRepository)
+	saveMessagesUseCase := impl4.NewSaveMessages(messageRepository)
 
-	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase)
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
-	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergy)
+	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergyUseCase)
 
 	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
 }

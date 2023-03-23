@@ -9,18 +9,22 @@ import (
 )
 
 type messageHandler struct {
-	sendMessage    usecase.SendMessage
-	replyMessage   usecase.ReplyMessage
-	getMessage     usecase.GetMessage
-	getCurrentUser usecase.GetCurrentUser
+	sendMessage      usecase.SendMessage
+	replyMessage     usecase.ReplyMessage
+	getMessage       usecase.GetMessage
+	getCurrentUser   usecase.GetCurrentUser
+	readCacheMessage usecase.ReadFromCacheMessage
+	saveMessages     usecase.SaveMessages
 }
 
-func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser) handler.MessageHandler {
+func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages) handler.MessageHandler {
 	return &messageHandler{
-		sendMessage:    message,
-		replyMessage:   replyMessage,
-		getMessage:     getMessage,
-		getCurrentUser: getCurrentUser,
+		sendMessage:      message,
+		replyMessage:     replyMessage,
+		getMessage:       getMessage,
+		getCurrentUser:   getCurrentUser,
+		readCacheMessage: readCacheMessage,
+		saveMessages:     saveMessages,
 	}
 }
 
@@ -37,7 +41,17 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.sendMessage.Invoke(currentUser, newMessage)
+	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+	}
+
+	var messages []entity.Message
+	if cachedMessage.Message != "" {
+		messages, err = mh.saveMessages.Invoke(messages)
+	} else {
+		messages, err = mh.sendMessage.Invoke(currentUser, newMessage)
+	}
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
@@ -59,7 +73,17 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.replyMessage.Invoke(currentUser, newMessage)
+	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
+	if err != nil {
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
+	}
+
+	var messages []entity.Message
+	if cachedMessage.Message != "" {
+		messages, err = mh.saveMessages.Invoke(messages)
+	} else {
+		messages, err = mh.replyMessage.Invoke(currentUser, newMessage)
+	}
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
