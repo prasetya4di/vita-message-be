@@ -2,21 +2,26 @@ package impl
 
 import (
 	"context"
+	"encoding/json"
+	"firebase.google.com/go/messaging"
 	"github.com/PullRequestInc/go-gpt3"
+	"log"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/network"
 	constant "vita-message-service/util/const"
 )
 
 type messageService struct {
-	ctx    context.Context
-	client gpt3.Client
+	ctx      context.Context
+	client   gpt3.Client
+	firebase *messaging.Client
 }
 
-func NewMessageService(client gpt3.Client) network.MessageService {
+func NewMessageService(client gpt3.Client, firebase *messaging.Client) network.MessageService {
 	return &messageService{
-		ctx:    context.Background(),
-		client: client,
+		ctx:      context.Background(),
+		client:   client,
+		firebase: firebase,
 	}
 }
 
@@ -70,4 +75,29 @@ func (ms *messageService) StreamMessage(message entity.Message, onData func(resp
 			Temperature: gpt3.Float32Ptr(0.8),
 		},
 		onData)
+}
+
+func (ms *messageService) BroadcastMessage(user *entity.User, messages []entity.Message) error {
+	chatMessage, err := json.Marshal(messages)
+	if err != nil {
+		log.Fatalf("error marshaling chat message: %v\n", err)
+	}
+
+	message := &messaging.Message{
+		Data: map[string]string{
+			"type": "chat",
+			"data": string(chatMessage),
+		},
+		Notification: &messaging.Notification{
+			Title: "New Message From Vita",
+			Body:  messages[len(messages)-1].Message,
+		},
+		Topic: user.Email,
+	}
+
+	_, err = ms.firebase.Send(ms.ctx, message)
+	if err != nil {
+		return err
+	}
+	return nil
 }
