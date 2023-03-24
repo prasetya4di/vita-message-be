@@ -54,8 +54,9 @@ func main() {
 	addEnergyUseCase := impl4.NewAddEnergy(energyRepository)
 	readFromCacheMessageUseCase := impl4.NewReadFromCacheMessage(cacheMessageRepository, messageRepository)
 	saveMessagesUseCase := impl4.NewSaveMessages(messageRepository)
+	broadcastMessage := impl4.NewBroadcastMessage(messageRepository)
 
-	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase)
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase, broadcastMessage)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
 	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergyUseCase)
 

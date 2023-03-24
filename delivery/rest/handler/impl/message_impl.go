@@ -17,9 +17,10 @@ type messageHandler struct {
 	getCurrentUser   usecase.GetCurrentUser
 	readCacheMessage usecase.ReadFromCacheMessage
 	saveMessages     usecase.SaveMessages
+	broadcastMessage usecase.BroadcastMessage
 }
 
-func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages) handler.MessageHandler {
+func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages, broadcastMessage usecase.BroadcastMessage) handler.MessageHandler {
 	return &messageHandler{
 		sendMessage:      message,
 		replyMessage:     replyMessage,
@@ -27,6 +28,7 @@ func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMe
 		getCurrentUser:   getCurrentUser,
 		readCacheMessage: readCacheMessage,
 		saveMessages:     saveMessages,
+		broadcastMessage: broadcastMessage,
 	}
 }
 
@@ -57,6 +59,8 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	} else {
 		messages, err = mh.sendMessage.Invoke(currentUser, newMessage)
 	}
+
+	err = mh.broadcastMessage.Invoke(currentUser, messages)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
@@ -92,6 +96,8 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	} else {
 		messages, err = mh.replyMessage.Invoke(currentUser, newMessage)
 	}
+
+	err = mh.broadcastMessage.Invoke(currentUser, messages)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
