@@ -58,17 +58,19 @@ func (md *messageDao) Insert(message entity.Message) (entity.Message, error) {
 func (md *messageDao) Inserts(messages []entity.Message) ([]entity.Message, error) {
 	tx := md.db.Begin()
 
+	var newMessages []entity.Message
 	for _, msg := range messages {
 		if err := tx.Create(&msg).Error; err != nil {
 			tx.Rollback()
 			return nil, err
 		}
+		newMessages = append(newMessages, msg)
 	}
 
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
-	return messages, nil
+	return newMessages, nil
 }
 
 func (md *messageDao) SaveImage(file multipart.File, header *multipart.FileHeader) string {

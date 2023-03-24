@@ -57,7 +57,7 @@ func (ms *messageService) SendMessages(user *entity.User, prevMessages []entity.
 		Model:       "gpt-3.5-turbo",
 		Messages:    reqMessage,
 		MaxTokens:   256,
-		Temperature: 0.8,
+		Temperature: gpt3.Float32Ptr(0.8),
 	})
 }
 
