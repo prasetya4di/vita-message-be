@@ -48,3 +48,7 @@ func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []enti
 func (mr *messageRepository) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {
 	return mr.network.StreamMessage(message, onData)
 }
+
+func (mr *messageRepository) BroadcastMessage(user *entity.User, messages []entity.Message) error {
+	return mr.network.BroadcastMessage(user, messages)
+}

@@ -23,23 +23,27 @@ func init() {
 }
 
 func main() {
-	db := local.GetDB()
 	gormDb := local.GetGormDb()
 	openAiClient := network.GetOpenAi()
+	firebase := network.GetFirebase()
 	localizer := translation.LoadTranslation()
 
-	messageDao := impl.NewMessageDao(db)
-	imageDao := impl.NewImageDao(db)
+	messageDao := impl.NewMessageDao(gormDb)
+	imageDao := impl.NewImageDao(gormDb)
 	userDao := impl.NewUserDao(gormDb)
-	messageService := impl2.NewMessageService(openAiClient)
+	energyDao := impl.NewEnergyDao(gormDb)
+	cacheMessageDao := impl.NewCacheMessageDao(gormDb)
+	messageService := impl2.NewMessageService(openAiClient, firebase)
 	imageService := impl2.NewImageService()
 
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
 	userRepository := impl3.NewUserRepository(userDao)
+	energyRepository := impl3.NewEnergyRepository(energyDao)
+	cacheMessageRepository := impl3.NewCacheMessageRepository(cacheMessageDao)
 
-	sendMessageUseCase := impl4.NewSendMessage(messageRepository)
-	replyMessageUseCase := impl4.NewReplyMessage(messageRepository)
+	sendMessageUseCase := impl4.NewSendMessage(messageRepository, cacheMessageRepository)
+	replyMessageUseCase := impl4.NewReplyMessage(messageRepository, cacheMessageRepository)
 	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)
@@ -47,10 +51,14 @@ func main() {
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
+	addEnergyUseCase := impl4.NewAddEnergy(energyRepository)
+	readFromCacheMessageUseCase := impl4.NewReadFromCacheMessage(cacheMessageRepository, messageRepository)
+	saveMessagesUseCase := impl4.NewSaveMessages(messageRepository)
+	broadcastMessage := impl4.NewBroadcastMessage(messageRepository)
 
-	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase)
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase, broadcastMessage)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
-	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase)
+	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergyUseCase)
 
 	rest.LoadRoutes(messageHandler, imageHandler, authHandler)
 }

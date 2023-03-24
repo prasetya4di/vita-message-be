@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"log"
 	"os"
+	"time"
 	"vita-message-service/data/entity"
 )
 
@@ -18,6 +19,7 @@ func GetGormDb() *gorm.DB {
 		DBName:               os.Getenv("DBNAME"),
 		ParseTime:            true,
 		AllowNativePasswords: true,
+		Loc:                  time.Local,
 	}
 
 	db, err := gorm.Open("mysql", cfg.FormatDSN())
@@ -29,7 +31,14 @@ func GetGormDb() *gorm.DB {
 		fmt.Println("gorm is connected to the database ", "mysql")
 	}
 
-	db.AutoMigrate(&entity.User{})
+	db.AutoMigrate(
+		&entity.User{},
+		&entity.Message{},
+		&entity.CacheMessage{},
+		&entity.Energy{})
+
+	db.Model(entity.Message{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
+	db.Model(entity.Energy{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
 
 	return db
 }

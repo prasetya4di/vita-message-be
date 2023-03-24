@@ -16,13 +16,15 @@ type authHandler struct {
 	login             usecase.Login
 	register          usecase.Register
 	addInitialMessage usecase.AddInitialMessage
+	addEnergy         usecase.AddEnergy
 }
 
-func NewAuthHandler(login usecase.Login, register usecase.Register, initiaMessage usecase.AddInitialMessage) handler.AuthHandler {
+func NewAuthHandler(login usecase.Login, register usecase.Register, initiaMessage usecase.AddInitialMessage, addEnergy usecase.AddEnergy) handler.AuthHandler {
 	return &authHandler{
 		login:             login,
 		register:          register,
 		addInitialMessage: initiaMessage,
+		addEnergy:         addEnergy,
 	}
 }
 
@@ -91,6 +93,12 @@ func (ah *authHandler) Register(c *gin.Context) {
 		return
 	}
 
+	energy, err := ah.addEnergy.Invoke(u.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+
 	newUser := response.User{
 		Email:     u.Email,
 		FirstName: u.FirstName,
@@ -103,6 +111,7 @@ func (ah *authHandler) Register(c *gin.Context) {
 	registerResponse := response.RegisterResponse{
 		User:    newUser,
 		Message: initialMessage,
+		Energy:  energy,
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"data": registerResponse})

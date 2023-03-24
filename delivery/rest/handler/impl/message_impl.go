@@ -6,21 +6,29 @@ import (
 	"vita-message-service/data/entity"
 	"vita-message-service/delivery/rest/handler"
 	"vita-message-service/usecase"
+	constant "vita-message-service/util/const"
+	"vita-message-service/util/local_time"
 )
 
 type messageHandler struct {
-	sendMessage    usecase.SendMessage
-	replyMessage   usecase.ReplyMessage
-	getMessage     usecase.GetMessage
-	getCurrentUser usecase.GetCurrentUser
+	sendMessage      usecase.SendMessage
+	replyMessage     usecase.ReplyMessage
+	getMessage       usecase.GetMessage
+	getCurrentUser   usecase.GetCurrentUser
+	readCacheMessage usecase.ReadFromCacheMessage
+	saveMessages     usecase.SaveMessages
+	broadcastMessage usecase.BroadcastMessage
 }
 
-func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser) handler.MessageHandler {
+func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages, broadcastMessage usecase.BroadcastMessage) handler.MessageHandler {
 	return &messageHandler{
-		sendMessage:    message,
-		replyMessage:   replyMessage,
-		getMessage:     getMessage,
-		getCurrentUser: getCurrentUser,
+		sendMessage:      message,
+		replyMessage:     replyMessage,
+		getMessage:       getMessage,
+		getCurrentUser:   getCurrentUser,
+		readCacheMessage: readCacheMessage,
+		saveMessages:     saveMessages,
+		broadcastMessage: broadcastMessage,
 	}
 }
 
@@ -37,7 +45,22 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.sendMessage.Invoke(currentUser, newMessage)
+	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
+
+	var messages []entity.Message
+	if cachedMessage.Message != "" {
+		newMessage.CreatedDate = local_time.CurrentTime()
+		newMessage.MessageType = constant.Send
+		newMessage.FileType = constant.Text
+		messages, err = mh.saveMessages.Invoke([]entity.Message{
+			newMessage,
+			cachedMessage,
+		})
+	} else {
+		messages, err = mh.sendMessage.Invoke(currentUser, newMessage)
+	}
+
+	err = mh.broadcastMessage.Invoke(currentUser, messages)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
@@ -59,7 +82,22 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	}
 
 	newMessage.Email = currentUser.Email
-	messages, err := mh.replyMessage.Invoke(currentUser, newMessage)
+	cachedMessage, err := mh.readCacheMessage.Invoke(newMessage)
+
+	var messages []entity.Message
+	if cachedMessage.Message != "" {
+		newMessage.CreatedDate = local_time.CurrentTime()
+		newMessage.MessageType = constant.Reply
+		newMessage.FileType = constant.Text
+		messages, err = mh.saveMessages.Invoke([]entity.Message{
+			newMessage,
+			cachedMessage,
+		})
+	} else {
+		messages, err = mh.replyMessage.Invoke(currentUser, newMessage)
+	}
+
+	err = mh.broadcastMessage.Invoke(currentUser, messages)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})

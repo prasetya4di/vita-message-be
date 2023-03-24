@@ -1,9 +1,9 @@
 package impl
 
 import (
-	"database/sql"
 	"fmt"
 	"github.com/disintegration/imaging"
+	"github.com/jinzhu/gorm"
 	"github.com/rwcarlsen/goexif/exif"
 	"github.com/sirupsen/logrus"
 	"image"
@@ -17,10 +17,10 @@ import (
 )
 
 type imageDao struct {
-	db *sql.DB
+	db *gorm.DB
 }
 
-func NewImageDao(db *sql.DB) local.ImageDao {
+func NewImageDao(db *gorm.DB) local.ImageDao {
 	return &imageDao{
 		db: db,
 	}
@@ -37,22 +37,11 @@ func (md *imageDao) Insert(email string, file multipart.File, header *multipart.
 		FileType:    constant.Image,
 	}
 
-	result, err := md.db.Exec(
-		"Insert into message (email, message, created_date, message_type, file_type) VALUES (?, ?, ?, ?, ?)",
-		message.Email,
-		message.Message,
-		message.CreatedDate,
-		message.MessageType,
-		message.FileType)
+	err := md.db.Create(&message).Error
+	if err != nil {
+		return message, fmt.Errorf("add message: %v", err)
+	}
 
-	if err != nil {
-		return message, fmt.Errorf("add message: %v", err)
-	}
-	id, err := result.LastInsertId()
-	if err != nil {
-		return message, fmt.Errorf("add message: %v", err)
-	}
-	message.ID = id
 	return message, nil
 }
 
