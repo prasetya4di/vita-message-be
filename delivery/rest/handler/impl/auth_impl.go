@@ -55,6 +55,7 @@ func (ah *authHandler) Login(c *gin.Context) {
 
 	loginResponse := response.LoginResponse{
 		User: response.User{
+			ID:        u.ID,
 			Email:     u.Email,
 			FirstName: u.FirstName,
 			LastName:  u.LastName,
@@ -100,6 +101,7 @@ func (ah *authHandler) Register(c *gin.Context) {
 	}
 
 	newUser := response.User{
+		ID:        u.ID,
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
