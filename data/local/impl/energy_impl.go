@@ -37,7 +37,7 @@ func (ed *energyDao) Insert(energy entity.Energy) (entity.Energy, error) {
 }
 
 func (ed *energyDao) Update(energy entity.Energy) (entity.Energy, error) {
-	err := ed.db.Update(energy.TableName(), &energy).Error
+	err := ed.db.Save(&energy).Error
 	if err != nil {
 		return energy, fmt.Errorf("error when update energy: %v", err)
 	}

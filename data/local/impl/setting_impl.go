@@ -17,7 +17,7 @@ func NewSettingDao(db *gorm.DB) local.SettingDao {
 
 func (sd *settingDao) Read() (*entity.Setting, error) {
 	setting := entity.Setting{}
-	err := sd.db.Model(entity.Setting{}).Take(&setting).Error
+	err := sd.db.Model(entity.Setting{}).First(&setting).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -27,7 +27,10 @@ func (sd *settingDao) Read() (*entity.Setting, error) {
 				Temperature:   0.8,
 				MaxTokens:     256,
 			}
-			sd.db.Save(setting)
+			err = sd.db.Create(&setting).Error
+			if err != nil {
+				return &entity.Setting{}, err
+			}
 		} else {
 			return &entity.Setting{}, err
 		}

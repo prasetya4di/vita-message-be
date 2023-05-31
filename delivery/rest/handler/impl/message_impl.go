@@ -60,8 +60,6 @@ func (mh *messageHandler) SendMessage(c *gin.Context) {
 		messages, err = mh.sendMessage.Invoke(currentUser, newMessage)
 	}
 
-	err = mh.broadcastMessage.Invoke(currentUser, messages)
-
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 	} else {
@@ -96,8 +94,6 @@ func (mh *messageHandler) ReplyMessage(c *gin.Context) {
 	} else {
 		messages, err = mh.replyMessage.Invoke(currentUser, newMessage)
 	}
-
-	err = mh.broadcastMessage.Invoke(currentUser, messages)
 
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
