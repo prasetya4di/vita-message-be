@@ -31,16 +31,17 @@ func GetGormDb() *gorm.DB {
 		fmt.Println("gorm is connected to the database ", "mysql")
 	}
 
-	db.AutoMigrate(
+	err = db.AutoMigrate(
 		&entity.User{},
 		&entity.Message{},
 		&entity.CacheMessage{},
 		&entity.Energy{},
 		&entity.Setting{},
-	)
+	).Error
 
-	db.Model(entity.Message{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
-	db.Model(entity.Energy{}).AddForeignKey("email", "users(email)", "CASCADE", "CASCADE")
+	if err != nil {
+		log.Fatal("migration error:", err)
+	}
 
 	return db
 }
