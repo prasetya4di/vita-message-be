@@ -26,21 +26,15 @@ func NewMessageService(client gpt3.Client, firebase *messaging.Client) network.M
 	}
 }
 
-func (ms *messageService) SendMessage(user *entity.User, message entity.Message) (*gpt3.CompletionResponse, error) {
-	reqMessage := "Vita is an AI that help user to answer their question. " + user.Nickname + ": " + message.Message + " Vita: "
-	return ms.client.Completion(ms.ctx, gpt3.CompletionRequest{
-		Prompt:      []string{reqMessage},
-		MaxTokens:   gpt3.IntPtr(256),
-		Temperature: gpt3.Float32Ptr(0.8),
-		Stop:        []string{user.Nickname + ":", "Vita:"},
-	})
-}
-
-func (ms *messageService) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.ChatCompletionResponse, error) {
+func (ms *messageService) SendMessages(
+	user *entity.User,
+	prevMessages []entity.Message,
+	newMessage entity.Message,
+	setting entity.Setting) (*gpt3.ChatCompletionResponse, error) {
 	var reqMessage []gpt3.ChatCompletionRequestMessage
 	reqMessage = append(reqMessage, gpt3.ChatCompletionRequestMessage{
 		Role:    "system",
-		Content: "Vita is an AI that help user to answer their question.",
+		Content: setting.SystemContent,
 	})
 	for _, message := range prevMessages {
 		if message.MessageType == constant.Reply {
@@ -60,10 +54,10 @@ func (ms *messageService) SendMessages(user *entity.User, prevMessages []entity.
 		Content: newMessage.Message,
 	})
 	return ms.client.ChatCompletion(ms.ctx, gpt3.ChatCompletionRequest{
-		Model:       "gpt-3.5-turbo",
+		Model:       setting.AiModel,
 		Messages:    reqMessage,
-		MaxTokens:   256,
-		Temperature: gpt3.Float32Ptr(0.8),
+		MaxTokens:   int(setting.MaxTokens),
+		Temperature: gpt3.Float32Ptr(setting.Temperature),
 		User:        user.Nickname,
 	})
 }
