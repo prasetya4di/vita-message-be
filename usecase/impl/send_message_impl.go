@@ -11,24 +11,30 @@ import (
 )
 
 type sendMessage struct {
-	repo                   repository.MessageRepository
+	messageRepository      repository.MessageRepository
+	settingRepository      repository.SettingRepository
 	cacheMessageRepository repository.CacheMessageRepository
 }
 
-func NewSendMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository) usecase.SendMessage {
+func NewSendMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository, settingRepository repository.SettingRepository) usecase.SendMessage {
 	return &sendMessage{
-		repo:                   messageRepository,
+		messageRepository:      messageRepository,
 		cacheMessageRepository: cacheMessageRepository,
+		settingRepository:      settingRepository,
 	}
 }
 
 func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
 	createdDate := time2.CurrentTime()
-	prevMessage, err := sm.repo.ReadByDate(message.Email, createdDate)
+	setting, err := sm.settingRepository.Read()
 	if err != nil {
 		return nil, err
 	}
-	response, err := sm.repo.SendMessages(user, prevMessage, message)
+	prevMessage, err := sm.messageRepository.ReadByDate(message.Email, createdDate)
+	if err != nil {
+		return nil, err
+	}
+	response, err := sm.messageRepository.SendMessages(user, prevMessage, message, setting)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +58,7 @@ func (sm *sendMessage) Invoke(user *entity.User, message entity.Message) ([]enti
 		newMessages = append(newMessages, newReply)
 	}
 
-	messages, err := sm.repo.Inserts(newMessages)
+	messages, err := sm.messageRepository.Inserts(newMessages)
 	if err != nil {
 		log.Println(err)
 		return nil, err

@@ -37,12 +37,8 @@ func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Messag
 	return mr.dao.Inserts(messages)
 }
 
-func (mr *messageRepository) SendMessage(user *entity.User, message entity.Message) (*gpt3.CompletionResponse, error) {
-	return mr.network.SendMessage(user, message)
-}
-
-func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message) (*gpt3.ChatCompletionResponse, error) {
-	return mr.network.SendMessages(user, prevMessages, newMessage)
+func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (*gpt3.ChatCompletionResponse, error) {
+	return mr.network.SendMessages(user, prevMessages, newMessage, setting)
 }
 
 func (mr *messageRepository) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {

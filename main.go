@@ -33,6 +33,7 @@ func main() {
 	userDao := impl.NewUserDao(gormDb)
 	energyDao := impl.NewEnergyDao(gormDb)
 	cacheMessageDao := impl.NewCacheMessageDao(gormDb)
+	settingDao := impl.NewSettingDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient, firebase)
 	imageService := impl2.NewImageService()
 
@@ -40,10 +41,11 @@ func main() {
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
 	userRepository := impl3.NewUserRepository(userDao)
 	energyRepository := impl3.NewEnergyRepository(energyDao)
+	settingRepository := impl3.NewSettingRepository(settingDao)
 	cacheMessageRepository := impl3.NewCacheMessageRepository(cacheMessageDao)
 
-	sendMessageUseCase := impl4.NewSendMessage(messageRepository, cacheMessageRepository)
-	replyMessageUseCase := impl4.NewReplyMessage(messageRepository, cacheMessageRepository)
+	sendMessageUseCase := impl4.NewSendMessage(messageRepository, cacheMessageRepository, settingRepository)
+	replyMessageUseCase := impl4.NewReplyMessage(messageRepository, cacheMessageRepository, settingRepository)
 	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)

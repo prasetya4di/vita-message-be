@@ -30,7 +30,7 @@ func (ms *messageService) SendMessages(
 	user *entity.User,
 	prevMessages []entity.Message,
 	newMessage entity.Message,
-	setting entity.Setting) (*gpt3.ChatCompletionResponse, error) {
+	setting *entity.Setting) (*gpt3.ChatCompletionResponse, error) {
 	var reqMessage []gpt3.ChatCompletionRequestMessage
 	reqMessage = append(reqMessage, gpt3.ChatCompletionRequestMessage{
 		Role:    "system",

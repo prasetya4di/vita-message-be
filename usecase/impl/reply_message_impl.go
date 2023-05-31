@@ -11,19 +11,25 @@ import (
 )
 
 type replyMessage struct {
-	repo                   repository.MessageRepository
+	messageRepository      repository.MessageRepository
+	settingRepository      repository.SettingRepository
 	cacheMessageRepository repository.CacheMessageRepository
 }
 
-func NewReplyMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository) usecase.ReplyMessage {
+func NewReplyMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository, settingRepository repository.SettingRepository) usecase.ReplyMessage {
 	return &replyMessage{
-		repo:                   messageRepository,
+		messageRepository:      messageRepository,
 		cacheMessageRepository: cacheMessageRepository,
+		settingRepository:      settingRepository,
 	}
 }
 
 func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]entity.Message, error) {
-	response, err := sm.repo.SendMessages(user, []entity.Message{}, message)
+	setting, err := sm.settingRepository.Read()
+	if err != nil {
+		return nil, err
+	}
+	response, err := sm.messageRepository.SendMessages(user, []entity.Message{}, message, setting)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +53,7 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 		newMessages = append(newMessages, newReply)
 	}
 
-	messages, err := sm.repo.Inserts(newMessages)
+	messages, err := sm.messageRepository.Inserts(newMessages)
 	if err != nil {
 		log.Println(err)
 		return nil, err
