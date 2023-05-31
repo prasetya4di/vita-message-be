@@ -1,8 +1,8 @@
 package impl
 
 import (
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"log"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"

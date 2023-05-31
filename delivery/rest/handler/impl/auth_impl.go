@@ -2,8 +2,8 @@ package impl
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 	"net/http"
 	"vita-message-service/delivery/rest/handler"
 	"vita-message-service/delivery/rest/request"
@@ -55,7 +55,6 @@ func (ah *authHandler) Login(c *gin.Context) {
 
 	loginResponse := response.LoginResponse{
 		User: response.User{
-			ID:        u.ID,
 			Email:     u.Email,
 			FirstName: u.FirstName,
 			LastName:  u.LastName,
@@ -101,7 +100,6 @@ func (ah *authHandler) Register(c *gin.Context) {
 	}
 
 	newUser := response.User{
-		ID:        u.ID,
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,

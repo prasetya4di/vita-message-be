@@ -6,7 +6,6 @@ import (
 	"firebase.google.com/go/messaging"
 	"github.com/PullRequestInc/go-gpt3"
 	"log"
-	"strconv"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/network"
 	constant "vita-message-service/util/const"
@@ -88,7 +87,7 @@ func (ms *messageService) BroadcastMessage(user *entity.User, messages []entity.
 			Title: "New Message From Vita",
 			Body:  messages[len(messages)-1].Message,
 		},
-		Topic: user.Nickname + strconv.Itoa(int(user.ID)),
+		Topic: user.Email,
 	}
 
 	_, err = ms.firebase.Send(ms.ctx, message)

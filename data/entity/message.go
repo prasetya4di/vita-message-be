@@ -13,3 +13,7 @@ type Message struct {
 	FileType    string    `json:"file_type" gorm:"size:5; not null"`
 	EnergyUsage uint      `json:"energy_usage" gorm:"uint; not null"`
 }
+
+func (Message) TableName() string {
+	return "messages"
+}

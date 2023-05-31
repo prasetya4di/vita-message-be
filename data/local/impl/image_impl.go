@@ -3,9 +3,9 @@ package impl
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/jinzhu/gorm"
 	"github.com/rwcarlsen/goexif/exif"
 	"github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"image"
 	"log"
 	"mime/multipart"

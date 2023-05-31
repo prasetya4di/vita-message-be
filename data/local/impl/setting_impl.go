@@ -2,7 +2,7 @@ package impl
 
 import (
 	"errors"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
 )

@@ -3,7 +3,7 @@ package impl
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"image"
 	"log"
 	"mime/multipart"

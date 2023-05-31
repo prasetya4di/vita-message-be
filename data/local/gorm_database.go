@@ -3,7 +3,8 @@ package local
 import (
 	"fmt"
 	"github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
+	gmsql "gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	"log"
 	"os"
 	"time"
@@ -22,7 +23,7 @@ func GetGormDb() *gorm.DB {
 		Loc:                  time.Local,
 	}
 
-	db, err := gorm.Open("mysql", cfg.FormatDSN())
+	db, err := gorm.Open(gmsql.Open(cfg.FormatDSN()), &gorm.Config{})
 
 	if err != nil {
 		fmt.Println("cannot connect to database ", "mysql")
@@ -32,12 +33,11 @@ func GetGormDb() *gorm.DB {
 	}
 
 	err = db.AutoMigrate(
-		&entity.User{},
-		&entity.Message{},
-		&entity.CacheMessage{},
-		&entity.Energy{},
-		&entity.Setting{},
-	).Error
+		entity.User{},
+		entity.Message{},
+		entity.CacheMessage{},
+		entity.Energy{},
+		entity.Setting{})
 
 	if err != nil {
 		log.Fatal("migration error:", err)
