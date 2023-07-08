@@ -22,7 +22,7 @@ func (sd *settingDao) Read() (*entity.Setting, error) {
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			setting = entity.Setting{
-				SystemContent: "Vita is an AI that help user to answer their question.",
+				SystemContext: "Vita is an AI that help user to answer their question.",
 				AiModel:       "gpt-3.5-turbo",
 				Temperature:   0.8,
 				MaxTokens:     256,

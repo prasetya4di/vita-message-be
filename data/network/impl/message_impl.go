@@ -33,7 +33,7 @@ func (ms *messageService) SendMessages(
 	var reqMessage []gpt3.ChatCompletionRequestMessage
 	reqMessage = append(reqMessage, gpt3.ChatCompletionRequestMessage{
 		Role:    "system",
-		Content: setting.SystemContent,
+		Content: setting.SystemContext,
 	})
 	for _, message := range prevMessages {
 		if message.MessageType == constant.Reply {

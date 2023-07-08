@@ -39,7 +39,7 @@ func (md *messageDao) Read(email string) ([]entity.Message, error) {
 func (md *messageDao) ReadByDate(email string, time2 time.Time) ([]entity.Message, error) {
 	var messages []entity.Message
 
-	err := md.db.Where("email = ? and created_date >= ? and file_type = ?", email, time2.Add(-time.Hour*1), constant.Text).Error
+	err := md.db.Where("email = ? and created_date >= ? and file_type = ?", email, time2.Add(-time.Hour*1), constant.Text).Find(&messages).Error
 	if err != nil {
 		return nil, fmt.Errorf("message for email %q: %v", email, err)
 	}
