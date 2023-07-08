@@ -9,7 +9,3 @@ type Setting struct {
 	Temperature   float32
 	MaxTokens     uint
 }
-
-func (Setting) TableName() string {
-	return "setting"
-}
