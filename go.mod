@@ -4,7 +4,6 @@ go 1.20
 
 require (
 	cloud.google.com/go/vision v1.2.0
-	cloud.google.com/go/vision/v2 v2.7.1
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/PullRequestInc/go-gpt3 v1.1.15
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
@@ -15,11 +14,11 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.2.1
 	github.com/pelletier/go-toml/v2 v2.0.8
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd
+	github.com/sashabaranov/go-openai v1.22.0
 	github.com/sirupsen/logrus v1.9.2
 	golang.org/x/crypto v0.9.0
 	golang.org/x/text v0.9.0
 	google.golang.org/api v0.125.0
-	google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc
 	gorm.io/driver/mysql v1.5.1
 	gorm.io/gorm v1.25.1
 )
@@ -32,6 +31,7 @@ require (
 	cloud.google.com/go/iam v1.1.0 // indirect
 	cloud.google.com/go/longrunning v0.5.0 // indirect
 	cloud.google.com/go/storage v1.30.1 // indirect
+	cloud.google.com/go/vision/v2 v2.7.1 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -67,6 +67,7 @@ require (
 	golang.org/x/time v0.3.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
+	google.golang.org/genproto v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230530153820-e85fd2cbaebc // indirect
 	google.golang.org/grpc v1.55.0 // indirect

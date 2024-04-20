@@ -6,5 +6,5 @@ import (
 )
 
 type ImageService interface {
-	Scan(message entity.Message) []image.Possibility
+	Scan(message entity.Message, setting *entity.Setting) []image.Possibility
 }

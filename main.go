@@ -35,7 +35,7 @@ func main() {
 	cacheMessageDao := impl.NewCacheMessageDao(gormDb)
 	settingDao := impl.NewSettingDao(gormDb)
 	messageService := impl2.NewMessageService(openAiClient, firebase)
-	imageService := impl2.NewImageService()
+	imageService := impl2.NewImageService(openAiClient)
 
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
 	imageRepository := impl3.NewImageRepository(imageDao, imageService)
@@ -49,16 +49,15 @@ func main() {
 	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)
-	uploadImageUseCase := impl4.NewUploadImage(imageRepository)
+	uploadImageUseCase := impl4.NewUploadImage(imageRepository, settingRepository)
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)
 	addEnergyUseCase := impl4.NewAddEnergy(energyRepository)
 	readFromCacheMessageUseCase := impl4.NewReadFromCacheMessage(cacheMessageRepository, messageRepository)
 	saveMessagesUseCase := impl4.NewSaveMessages(messageRepository)
-	broadcastMessage := impl4.NewBroadcastMessage(messageRepository)
 
-	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase, broadcastMessage)
+	messageHandler := impl5.NewMessageHandler(sendMessageUseCase, replyMessageUseCase, getMessageUseCase, getCurrentUserUseCase, readFromCacheMessageUseCase, saveMessagesUseCase)
 	imageHandler := impl5.NewImageHandler(uploadImageUseCase, replyMessageUseCase, saveMessageUseCase, getCurrentUserUseCase, localizer)
 	authHandler := impl5.NewAuthHandler(loginUseCase, registerUseCase, addInitialMessageUseCase, addEnergyUseCase)
 

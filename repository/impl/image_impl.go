@@ -25,6 +25,6 @@ func (mr *imageRepository) Insert(email string, file multipart.File, header *mul
 	return mr.imageDao.Insert(email, file, header)
 }
 
-func (mr *imageRepository) Scan(message entity.Message) []image.Possibility {
-	return mr.imageService.Scan(message)
+func (mr *imageRepository) Scan(message entity.Message, setting *entity.Setting) []image.Possibility {
+	return mr.imageService.Scan(message, setting)
 }

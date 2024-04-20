@@ -10,23 +10,30 @@ import (
 )
 
 type uploadImage struct {
-	repo repository.ImageRepository
+	imageRepository   repository.ImageRepository
+	settingRepository repository.SettingRepository
 }
 
-func NewUploadImage(repo repository.ImageRepository) usecase.UploadImage {
+func NewUploadImage(imageRepository repository.ImageRepository, settingRepository repository.SettingRepository) usecase.UploadImage {
 	return &uploadImage{
-		repo,
+		imageRepository,
+		settingRepository,
 	}
 }
 
 func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipart.FileHeader) (image.Scan, error) {
-	message, err := sm.repo.Insert(email, file, header)
+	message, err := sm.imageRepository.Insert(email, file, header)
 	if err != nil {
 		log.Fatalf("error insert image: %v", err)
 		return image.Scan{}, err
 	}
 
-	result := sm.repo.Scan(message)
+	setting, err := sm.settingRepository.Read()
+	if err != nil {
+		return image.Scan{}, err
+	}
+
+	result := sm.imageRepository.Scan(message, setting)
 	return image.Scan{
 		Messages: []entity.Message{message}, Possibilities: result,
 	}, nil

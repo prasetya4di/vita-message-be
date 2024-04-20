@@ -17,10 +17,9 @@ type messageHandler struct {
 	getCurrentUser   usecase.GetCurrentUser
 	readCacheMessage usecase.ReadFromCacheMessage
 	saveMessages     usecase.SaveMessages
-	broadcastMessage usecase.BroadcastMessage
 }
 
-func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages, broadcastMessage usecase.BroadcastMessage) handler.MessageHandler {
+func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMessage, getMessage usecase.GetMessage, getCurrentUser usecase.GetCurrentUser, readCacheMessage usecase.ReadFromCacheMessage, saveMessages usecase.SaveMessages) handler.MessageHandler {
 	return &messageHandler{
 		sendMessage:      message,
 		replyMessage:     replyMessage,
@@ -28,7 +27,6 @@ func NewMessageHandler(message usecase.SendMessage, replyMessage usecase.ReplyMe
 		getCurrentUser:   getCurrentUser,
 		readCacheMessage: readCacheMessage,
 		saveMessages:     saveMessages,
-		broadcastMessage: broadcastMessage,
 	}
 }
 

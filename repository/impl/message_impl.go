@@ -1,7 +1,7 @@
 package impl
 
 import (
-	"github.com/PullRequestInc/go-gpt3"
+	"github.com/sashabaranov/go-openai"
 	"time"
 	"vita-message-service/data/entity"
 	"vita-message-service/data/local"
@@ -37,14 +37,6 @@ func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Messag
 	return mr.dao.Inserts(messages)
 }
 
-func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (*gpt3.ChatCompletionResponse, error) {
+func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error) {
 	return mr.network.SendMessages(user, prevMessages, newMessage, setting)
-}
-
-func (mr *messageRepository) StreamMessage(message entity.Message, onData func(response *gpt3.CompletionResponse)) error {
-	return mr.network.StreamMessage(message, onData)
-}
-
-func (mr *messageRepository) BroadcastMessage(user *entity.User, messages []entity.Message) error {
-	return mr.network.BroadcastMessage(user, messages)
 }
