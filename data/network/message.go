@@ -1,6 +1,7 @@
 package network
 
 import (
+	"github.com/sashabaranov/go-openai"
 	"vita-message-service/data/entity"
 )
 

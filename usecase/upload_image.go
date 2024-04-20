@@ -2,9 +2,9 @@ package usecase
 
 import (
 	"mime/multipart"
-	"vita-message-service/data/entity/image"
+	"vita-message-service/data/entity"
 )
 
 type UploadImage interface {
-	Invoke(email string, file multipart.File, header *multipart.FileHeader) (image.Scan, error)
+	Invoke(email string, file multipart.File, header *multipart.FileHeader, message string) ([]entity.Message, error)
 }

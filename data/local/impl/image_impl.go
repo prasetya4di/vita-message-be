@@ -3,8 +3,6 @@ package impl
 import (
 	"fmt"
 	"github.com/disintegration/imaging"
-	"github.com/rwcarlsen/goexif/exif"
-	"github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"image"
 	"log"
@@ -51,49 +49,19 @@ func saveImage(file multipart.File, header *multipart.FileHeader) string {
 	now := time2.CurrentTime()
 	filename := fmt.Sprintf("%v", now.Unix()) + fileExt
 
-	path := fmt.Sprintf("upload/images/%v", filename)
-
-	file.Seek(0, 0)
-	x, err := exif.Decode(file)
+	_, err := file.Seek(0, 0)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("failed to save image: %v", err)
 	}
-	orient, _ := x.Get(exif.Orientation)
-
-	file.Seek(0, 0)
 	imageFile, _, err := image.Decode(file)
 	if err != nil {
 		log.Fatal(err)
 	}
-	img := reverseOrientation(imageFile, orient.String())
 
-	err = imaging.Save(img, path)
+	err = imaging.Save(imageFile, fmt.Sprintf("upload/images/%v", filename))
 	if err != nil {
 		log.Fatalf("failed to save image: %v", err)
 	}
 
 	return filename
-}
-
-func reverseOrientation(img image.Image, o string) *image.NRGBA {
-	switch o {
-	case "1":
-		return imaging.Clone(img)
-	case "2":
-		return imaging.FlipV(img)
-	case "3":
-		return imaging.Rotate180(img)
-	case "4":
-		return imaging.Rotate180(imaging.FlipV(img))
-	case "5":
-		return imaging.Rotate270(imaging.FlipV(img))
-	case "6":
-		return imaging.Rotate270(img)
-	case "7":
-		return imaging.Rotate90(imaging.FlipV(img))
-	case "8":
-		return imaging.Rotate90(img)
-	}
-	logrus.Errorf("unknown orientation %s, expect 1-8", o)
-	return imaging.Clone(img)
 }

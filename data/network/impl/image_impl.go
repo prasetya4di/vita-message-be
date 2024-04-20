@@ -2,9 +2,11 @@ package impl
 
 import (
 	"context"
+	"fmt"
+	"github.com/polds/imgbase64"
 	"github.com/sashabaranov/go-openai"
+	"log"
 	"vita-message-service/data/entity"
-	"vita-message-service/data/entity/image"
 	"vita-message-service/data/network"
 )
 
@@ -20,6 +22,38 @@ func NewImageService(client *openai.Client) network.ImageService {
 	}
 }
 
-func (m *imageService) Scan(message entity.Message, setting *entity.Setting) []image.Possibility {
-	return []image.Possibility{}
+func (m *imageService) Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
+	imgUrl, err := imgbase64.FromLocal(fmt.Sprintf("upload/images/%s", imgPath))
+	if err != nil {
+		log.Fatalf("error convert image to base64: %v", err)
+		return openai.ChatCompletionResponse{}, err
+	}
+
+	return m.client.CreateChatCompletion(m.ctx, openai.ChatCompletionRequest{
+		Model: openai.GPT4VisionPreview,
+		Messages: []openai.ChatCompletionMessage{
+			{
+				Role:    openai.ChatMessageRoleSystem,
+				Content: setting.SystemContext,
+			},
+			{
+				Role: openai.ChatMessageRoleUser,
+				MultiContent: []openai.ChatMessagePart{
+					{
+						Type: openai.ChatMessagePartTypeText,
+						Text: prompt,
+					},
+					{
+						Type: openai.ChatMessagePartTypeImageURL,
+						ImageURL: &openai.ChatMessageImageURL{
+							URL:    imgUrl,
+							Detail: openai.ImageURLDetailLow,
+						},
+					},
+				},
+			},
+		},
+		MaxTokens:   int(setting.MaxTokens),
+		Temperature: setting.Temperature,
+	})
 }

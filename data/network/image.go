@@ -1,10 +1,10 @@
 package network
 
 import (
+	"github.com/sashabaranov/go-openai"
 	"vita-message-service/data/entity"
-	"vita-message-service/data/entity/image"
 )
 
 type ImageService interface {
-	Scan(message entity.Message, setting *entity.Setting) []image.Possibility
+	Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error)
 }

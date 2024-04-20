@@ -49,7 +49,7 @@ func main() {
 	saveMessageUseCase := impl4.NewSaveMessage(messageRepository)
 	getMessageUseCase := impl4.NewGetMessage(messageRepository)
 	getCurrentUserUseCase := impl4.NewGetCurrentUser(userRepository)
-	uploadImageUseCase := impl4.NewUploadImage(imageRepository, settingRepository)
+	uploadImageUseCase := impl4.NewUploadImage(imageRepository, settingRepository, messageRepository)
 	loginUseCase := impl4.NewLoginUseCase(userRepository)
 	registerUseCase := impl4.NewRegisterUseCase(userRepository)
 	addInitialMessageUseCase := impl4.NewAddInitialMessage(messageRepository)

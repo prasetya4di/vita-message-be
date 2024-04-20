@@ -30,24 +30,24 @@ func (ms *messageService) SendMessages(
 	setting *entity.Setting) (openai.ChatCompletionResponse, error) {
 	var reqMessage []openai.ChatCompletionMessage
 	reqMessage = append(reqMessage, openai.ChatCompletionMessage{
-		Role:    "system",
+		Role:    openai.ChatMessageRoleSystem,
 		Content: setting.SystemContext,
 	})
 	for _, message := range prevMessages {
 		if message.MessageType == constant.Reply {
 			reqMessage = append(reqMessage, openai.ChatCompletionMessage{
-				Role:    "assistant",
+				Role:    openai.ChatMessageRoleAssistant,
 				Content: message.Message,
 			})
 		} else {
 			reqMessage = append(reqMessage, openai.ChatCompletionMessage{
-				Role:    "user",
+				Role:    openai.ChatMessageRoleUser,
 				Content: message.Message,
 			})
 		}
 	}
 	reqMessage = append(reqMessage, openai.ChatCompletionMessage{
-		Role:    "user",
+		Role:    openai.ChatMessageRoleUser,
 		Content: newMessage.Message,
 	})
 	return ms.client.CreateChatCompletion(ms.ctx, openai.ChatCompletionRequest{

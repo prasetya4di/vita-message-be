@@ -1,9 +1,9 @@
 package impl
 
 import (
+	"github.com/sashabaranov/go-openai"
 	"mime/multipart"
 	"vita-message-service/data/entity"
-	"vita-message-service/data/entity/image"
 	"vita-message-service/data/local"
 	"vita-message-service/data/network"
 	"vita-message-service/repository"
@@ -25,6 +25,6 @@ func (mr *imageRepository) Insert(email string, file multipart.File, header *mul
 	return mr.imageDao.Insert(email, file, header)
 }
 
-func (mr *imageRepository) Scan(message entity.Message, setting *entity.Setting) []image.Possibility {
-	return mr.imageService.Scan(message, setting)
+func (mr *imageRepository) Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
+	return mr.imageService.Scan(message, setting, imgPath, prompt)
 }
