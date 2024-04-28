@@ -40,15 +40,15 @@ func (m *imageService) Scan(message entity.Message, setting *entity.Setting, img
 				Role: openai.ChatMessageRoleUser,
 				MultiContent: []openai.ChatMessagePart{
 					{
-						Type: openai.ChatMessagePartTypeText,
-						Text: prompt,
-					},
-					{
 						Type: openai.ChatMessagePartTypeImageURL,
 						ImageURL: &openai.ChatMessageImageURL{
 							URL:    imgUrl,
 							Detail: openai.ImageURLDetailLow,
 						},
+					},
+					{
+						Type: openai.ChatMessagePartTypeText,
+						Text: prompt,
 					},
 				},
 			},
