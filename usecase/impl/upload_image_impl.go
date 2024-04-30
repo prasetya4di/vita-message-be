@@ -47,7 +47,7 @@ func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipa
 		return nil, err
 	}
 
-	scanResult, err := sm.imageRepository.Scan(imgMessage, setting, imgMessage.Message, prompt.Message)
+	scanResult, err := sm.imageRepository.Scan(setting, imgMessage.Message, prompt.Message)
 	if err != nil {
 		log.Fatalf("error scan image: %v", err)
 		return nil, err

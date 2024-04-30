@@ -6,5 +6,5 @@ import (
 )
 
 type ImageService interface {
-	Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error)
+	Scan(setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error)
 }

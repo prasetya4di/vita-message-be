@@ -25,6 +25,6 @@ func (mr *imageRepository) Insert(email string, file multipart.File, header *mul
 	return mr.imageDao.Insert(email, file, header)
 }
 
-func (mr *imageRepository) Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
-	return mr.imageService.Scan(message, setting, imgPath, prompt)
+func (mr *imageRepository) Scan(setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
+	return mr.imageService.Scan(setting, imgPath, prompt)
 }

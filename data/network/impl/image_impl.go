@@ -22,7 +22,7 @@ func NewImageService(client *openai.Client) network.ImageService {
 	}
 }
 
-func (m *imageService) Scan(message entity.Message, setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
+func (m *imageService) Scan(setting *entity.Setting, imgPath string, prompt string) (openai.ChatCompletionResponse, error) {
 	imgUrl, err := imgbase64.FromLocal(fmt.Sprintf("upload/images/%s", imgPath))
 	if err != nil {
 		log.Fatalf("error convert image to base64: %v", err)
