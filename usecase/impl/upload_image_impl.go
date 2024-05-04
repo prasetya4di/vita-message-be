@@ -24,10 +24,10 @@ func NewUploadImage(imageRepository repository.ImageRepository, settingRepositor
 	}
 }
 
-func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipart.FileHeader, message string) ([]entity.Message, error) {
+func (sm *uploadImage) Invoke(user *entity.User, file multipart.File, header *multipart.FileHeader, message string) ([]entity.Message, error) {
 	var newMessages []entity.Message
-
-	imgMessage, err := sm.imageRepository.Insert(email, file, header)
+	createdDate := time2.CurrentTime()
+	imgMessage, err := sm.imageRepository.Insert(user.Email, file, header)
 	if err != nil {
 		log.Fatalf("error insert image: %v", err)
 		return nil, err
@@ -35,7 +35,7 @@ func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipa
 
 	prompt, err := sm.messageRepository.Insert(entity.Message{
 		Message:     message,
-		Email:       email,
+		Email:       user.Email,
 		MessageType: constant.Send,
 		FileType:    constant.Text,
 		CreatedDate: time2.CurrentTime(),
@@ -47,13 +47,17 @@ func (sm *uploadImage) Invoke(email string, file multipart.File, header *multipa
 		return nil, err
 	}
 
-	scanResult, err := sm.imageRepository.Scan(setting, imgMessage.Message, prompt.Message)
+	prevMessage, err := sm.messageRepository.ReadByDate(user.Email, createdDate)
 	if err != nil {
-		log.Fatalf("error scan image: %v", err)
 		return nil, err
 	}
 
-	createdDate := time2.CurrentTime()
+	scanResult, err := sm.messageRepository.SendMessages(user, prevMessage, []entity.Message{
+		imgMessage, prompt,
+	}, setting)
+	if err != nil {
+		return nil, err
+	}
 
 	for _, choice := range scanResult.Choices {
 		newReply := entity.Message{

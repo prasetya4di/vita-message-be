@@ -2,7 +2,6 @@ package impl
 
 import (
 	"log"
-	"strings"
 	"vita-message-service/data/entity"
 	"vita-message-service/repository"
 	"vita-message-service/usecase"
@@ -11,16 +10,14 @@ import (
 )
 
 type replyMessage struct {
-	messageRepository      repository.MessageRepository
-	settingRepository      repository.SettingRepository
-	cacheMessageRepository repository.CacheMessageRepository
+	messageRepository repository.MessageRepository
+	settingRepository repository.SettingRepository
 }
 
-func NewReplyMessage(messageRepository repository.MessageRepository, cacheMessageRepository repository.CacheMessageRepository, settingRepository repository.SettingRepository) usecase.ReplyMessage {
+func NewReplyMessage(messageRepository repository.MessageRepository, settingRepository repository.SettingRepository) usecase.ReplyMessage {
 	return &replyMessage{
-		messageRepository:      messageRepository,
-		cacheMessageRepository: cacheMessageRepository,
-		settingRepository:      settingRepository,
+		messageRepository: messageRepository,
+		settingRepository: settingRepository,
 	}
 }
 
@@ -29,7 +26,7 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 	if err != nil {
 		return nil, err
 	}
-	response, err := sm.messageRepository.SendMessages(user, []entity.Message{}, message, setting)
+	response, err := sm.messageRepository.SendMessages(user, []entity.Message{}, []entity.Message{message}, setting)
 	if err != nil {
 		return nil, err
 	}
@@ -60,21 +57,9 @@ func (sm *replyMessage) Invoke(user *entity.User, message entity.Message) ([]ent
 	}
 
 	var prevMessages []string
-	delimiter := "\n" // choose your delimiter
 
 	for _, newMessage := range newMessages {
 		prevMessages = append(prevMessages, newMessage.Message)
-	}
-
-	cacheMessage := entity.CacheMessage{
-		Message:     message.Message,
-		PrevMessage: strings.Join(prevMessages, delimiter),
-		Answer:      newMessages[len(newMessages)-1].Message,
-		EnergyUsage: newMessages[len(newMessages)-1].EnergyUsage,
-	}
-	_, err = sm.cacheMessageRepository.Insert(cacheMessage)
-	if err != nil {
-		return nil, err
 	}
 
 	return messages, nil

@@ -37,6 +37,6 @@ func (mr *messageRepository) Inserts(messages []entity.Message) ([]entity.Messag
 	return mr.dao.Inserts(messages)
 }
 
-func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error) {
-	return mr.network.SendMessages(user, prevMessages, newMessage, setting)
+func (mr *messageRepository) SendMessages(user *entity.User, prevMessages []entity.Message, newMessages []entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error) {
+	return mr.network.SendMessages(user, prevMessages, newMessages, setting)
 }

@@ -6,5 +6,5 @@ import (
 )
 
 type MessageService interface {
-	SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error)
+	SendMessages(user *entity.User, prevMessages []entity.Message, newMessages []entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error)
 }

@@ -45,7 +45,7 @@ func (ih *imageHandler) UploadImage(c *gin.Context) {
 	if err != nil {
 		c.IndentedJSON(http.StatusBadRequest, gin.H{"message": err})
 	}
-	messages, err := ih.uploadImage.Invoke(currentUser.Email, file, header, message)
+	messages, err := ih.uploadImage.Invoke(currentUser, file, header, message)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"message": err})
 		log.Fatalf("error insert image 3: %v", err)

@@ -11,5 +11,5 @@ type MessageRepository interface {
 	ReadByDate(email string, time time.Time) ([]entity.Message, error)
 	Insert(message entity.Message) (entity.Message, error)
 	Inserts(messages []entity.Message) ([]entity.Message, error)
-	SendMessages(user *entity.User, prevMessages []entity.Message, newMessage entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error)
+	SendMessages(user *entity.User, prevMessages []entity.Message, newMessages []entity.Message, setting *entity.Setting) (openai.ChatCompletionResponse, error)
 }
