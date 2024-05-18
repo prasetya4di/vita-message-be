@@ -2,7 +2,6 @@ package impl
 
 import (
 	"context"
-	"firebase.google.com/go/messaging"
 	"fmt"
 	"github.com/polds/imgbase64"
 	"github.com/sashabaranov/go-openai"
@@ -13,16 +12,14 @@ import (
 )
 
 type messageService struct {
-	ctx      context.Context
-	client   *openai.Client
-	firebase *messaging.Client
+	ctx    context.Context
+	client *openai.Client
 }
 
-func NewMessageService(client *openai.Client, firebase *messaging.Client) network.MessageService {
+func NewMessageService(client *openai.Client) network.MessageService {
 	return &messageService{
-		ctx:      context.Background(),
-		client:   client,
-		firebase: firebase,
+		ctx:    context.Background(),
+		client: client,
 	}
 }
 

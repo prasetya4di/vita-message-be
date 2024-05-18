@@ -25,14 +25,13 @@ func init() {
 func main() {
 	gormDb := local.GetGormDb()
 	openAiClient := network.GetOpenAi()
-	firebase := network.GetFirebase()
 	localizer := translation.LoadTranslation()
 
 	messageDao := impl.NewMessageDao(gormDb)
 	imageDao := impl.NewImageDao(gormDb)
 	userDao := impl.NewUserDao(gormDb)
 	settingDao := impl.NewSettingDao(gormDb)
-	messageService := impl2.NewMessageService(openAiClient, firebase)
+	messageService := impl2.NewMessageService(openAiClient)
 	imageService := impl2.NewImageService(openAiClient)
 
 	messageRepository := impl3.NewMessageRepository(messageDao, messageService)
