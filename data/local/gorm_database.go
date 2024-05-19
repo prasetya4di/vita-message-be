@@ -35,8 +35,6 @@ func GetGormDb() *gorm.DB {
 	err = db.AutoMigrate(
 		entity.User{},
 		entity.Message{},
-		entity.CacheMessage{},
-		entity.Energy{},
 		entity.Setting{})
 
 	if err != nil {

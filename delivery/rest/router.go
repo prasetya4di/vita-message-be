@@ -9,6 +9,7 @@ import (
 )
 
 func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.AuthHandler) {
+	gin.SetMode(os.Getenv(gin.EnvGinMode))
 	router := gin.Default()
 	router.POST("/login", ah.Login)
 	router.POST("/register", ah.Register)
