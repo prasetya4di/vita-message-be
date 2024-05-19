@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"os"
@@ -25,7 +26,7 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 	routeImage.Use(middlewares.JwtAuthMiddleware())
 	routeImage.POST("", ih.UploadImage)
 
-	err := router.Run(os.Getenv("BASEURL") + ":" + os.Getenv("PORT"))
+	err := router.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 	if err != nil {
 		log.Fatal(err)
 	}
