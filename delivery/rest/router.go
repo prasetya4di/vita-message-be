@@ -16,7 +16,7 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://vita-377401.web.app", "http://localhost:5555", "https://*.ngrok.io"},
+		AllowOrigins:     []string{"https://vita-377401.web.app", "http://localhost:5555", "https://*.ngrok.io", "https://*..ngrok-free.app"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
