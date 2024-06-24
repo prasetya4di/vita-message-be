@@ -16,7 +16,7 @@ func LoadRoutes(mh handler.MessageHandler, ih handler.ImageHandler, ah handler.A
 	router := gin.Default()
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"https://vita-377401.web.app"},
+		AllowOrigins:     []string{"https://vita-377401.web.app", "http://localhost:5555"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
